@@ -64,6 +64,58 @@ drop function inline_0 ();
 
 
 ---------------------------------------------------------
+-- Setup a "Export Project CSV" admin link in "projects"
+--
+
+create or replace function inline_0 ()
+returns integer as '
+declare
+        -- Menu IDs
+        v_menu                  integer;
+	v_admin_menu		integer;
+
+        -- Groups
+        v_senman                integer;
+        v_admins                integer;
+BEGIN
+    select group_id into v_admins from groups where group_name = ''P/O Admins'';
+    select group_id into v_senman from groups where group_name = ''Senior Managers'';
+
+    select menu_id
+    into v_admin_menu
+    from im_menus
+    where label=''projects_admin'';
+
+    -- Create a "Export Projects CSV" link under "Projects"
+    v_menu := im_menu__new (
+        null,                   -- p_menu_id
+        ''acs_object'',         -- object_type
+        now(),                  -- creation_date
+        null,                   -- creation_user
+        null,                   -- creation_ip
+        null,                   -- context_id
+        ''intranet-dw-light'',     -- package_name
+        ''projects_admin_csv'',    -- label
+        ''Export Projects CSV'',    -- name
+        ''/intranet-dw-light/projects.csv'', -- url
+        10,                     -- sort_order
+        v_admin_menu,            -- parent_menu_id
+        null                     -- p_visible_tcl
+    );
+
+    PERFORM acs_permission__grant_permission(v_menu, v_admins, ''read'');
+    PERFORM acs_permission__grant_permission(v_menu, v_senman, ''read'');
+
+    return 0;
+end;' language 'plpgsql';
+
+select inline_0 ();
+drop function inline_0 ();
+
+
+
+
+---------------------------------------------------------
 -- Setup a "Export Customer Invoices CSV" admin link in
 -- "Customer Invoices"
 --
@@ -171,8 +223,7 @@ drop function inline_0 ();
 
 
 
-
-
 \i ../common/companies-export.sql
+\i ../common/projects-export.sql
 \i ../common/invoices-export.sql
 

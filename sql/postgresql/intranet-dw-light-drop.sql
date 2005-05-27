@@ -21,6 +21,9 @@ select im_menu__del_module('intranet-dw-light');
 delete from im_view_columns where view_id = 3;
 delete from im_views where view_id = 3;
 
+-- Delete projects_csv
+delete from im_view_columns where view_id = 24;
+delete from im_views where view_id = 24;
 
 -- Delete invoices_csv
 delete from im_view_columns where view_id = 34;

@@ -14,7 +14,7 @@ ad_library {
 # Invoice CSV export doesn't work with a regular TCL
 # file, so we have to register a procedure here instead
 # of the web page.
-ad_register_proc GET /intranet-dw-light/* im_dw_light_handler
+ad_register_proc GET "/intranet-dw-light/*.csv" im_dw_light_handler
 
 
 # -----------------------------------------------------------
@@ -54,6 +54,10 @@ ad_proc im_dw_light_handler { } {
     switch $file_body {
 	companies {
 	    return [im_companies_csv1]
+	}
+
+	projects {
+	    return [im_projects_csv1]
 	}
 
 	invoices {
@@ -231,6 +235,227 @@ ad_proc im_companies_csv1 {
 	    if {"" != $csv_line} { append csv_line $csv_separator }
 	    set cmd "set ttt $column_var"
 		eval "$cmd"
+	    append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
+	}
+	append csv_line "\r\n"
+	append csv_body $csv_line
+	
+	incr ctr
+    }
+
+    set string "$csv_header\r\n$csv_body\r\n"
+    set string_latin1 [encoding convertto "iso8859-1" $string]
+    
+    set app_type "application/csv"
+#    set app_type "text/plain"
+    set charset "latin1"
+
+    # For some reason we have to send out a "hard" HTTP
+    # header. ns_return and ns_respond don't seem to convert
+    # the content string into the right Latin1 encoding.
+    # So we do this manually here...
+    set all_the_headers "HTTP/1.0 200 OK
+MIME-Version: 1.0
+Content-Type: $app_type; charset=$charset\r\n"
+    util_WriteWithExtraOutputHeaders $all_the_headers
+
+    ns_write $string_latin1
+
+}
+
+
+# -----------------------------------------------------------
+# Projects CSV Export
+# -----------------------------------------------------------
+
+
+ad_proc im_projects_csv { } {  
+    Returns a "broad" CSV file particularly designed to be
+    Pivot-Table friendly.
+} {
+    return [im_projects_csv1 -project_status_id 0 -project_type_id 0 -company_id 0]
+}
+
+
+ad_proc im_projects_csv1 {
+    { -view_name "project_csv" }
+    { -project_status_id 0 } 
+    { -project_type_id 0 } 
+    { -company_id 0 } 
+} {  
+    Returns a "broad" CSV file particularly designed to be
+    Pivot-Table friendly.
+} {
+    ns_log Notice "im_companies_csv: "
+    set current_user_id [ad_maybe_redirect_for_registration]
+    set user_is_admin_p [im_is_user_site_wide_or_intranet_admin $current_user_id]
+    set today [lindex [split [ns_localsqltimestamp] " "] 0]
+    if {!$user_is_admin_p} {
+	ad_return_complaint 1 "<li>[_ intranet-core.lt_You_have_insufficient_6]"
+	return
+    }
+
+    set csv_separator ";"
+    
+    # ---------------------------------------------------------------
+    # Define the column headers and column contents that 
+    # we want to show:
+    #
+    set view_id [db_string get_view_id "
+	select view_id 
+	from im_views 
+	where view_name=:view_name
+    " -default 0]
+    
+    set column_headers [list]
+    set column_vars [list]
+    
+    set column_sql "
+	select
+		column_name,
+		column_render_tcl,
+		visible_for
+	from
+		im_view_columns
+	where
+		view_id=:view_id
+		and group_id is null
+	order by
+		sort_order
+    "
+    
+    db_foreach column_list_sql $column_sql {
+	if {"" == $visible_for || [eval $visible_for]} {
+	    lappend column_headers "$column_name"
+	    lappend column_vars "$column_render_tcl"
+	}
+    }
+
+
+    # ---------------------------------------------------------------
+    # 5. Generate SQL Query
+    # ---------------------------------------------------------------
+    
+    set criteria [list]
+    if { ![empty_string_p $project_status_id] && $project_status_id > 0 } {
+	lappend criteria "p.project_status_id in (
+	select :project_status_id from dual
+	UNION
+	select child_id
+	from im_category_hierarchy
+	where parent_id = :project_status_id
+    )"
+    }
+
+    if { ![empty_string_p $project_type_id] && $project_type_id != 0 } {
+	# Select the specified project type and its subtypes
+	lappend criteria "p.project_type_id in (
+	select :project_type_id from dual
+	UNION
+	select child_id 
+	from im_category_hierarchy
+	where parent_id = :project_type_id
+    )"
+    }
+    
+    if { ![empty_string_p $company_id] && $company_id != 0 } {
+	lappend criteria "p.company_id=:company_id"
+    }
+
+    set where_clause [join $criteria " and\n            "]
+    if { ![empty_string_p $where_clause] } {
+	set where_clause " and $where_clause"
+    }
+    
+
+    set create_date ""
+    set open_date ""
+    set quote_date ""
+    set deliver_date ""
+    set invoice_date ""
+    set close_date ""
+    
+    set status_from "
+	(select project_id, min(audit_date) as when from im_projects_status_audit
+	group by project_id) s_create,
+	(select min(audit_date) as when, project_id from im_projects_status_audit
+	where project_status_id=[im_project_status_quoting] group by project_id) s_quote,
+	(select min(audit_date) as when, project_id from im_projects_status_audit
+	where project_status_id=[im_project_status_open] group by project_id) s_open,
+	(select min(audit_date) as when, project_id from im_projects_status_audit
+	where project_status_id=[im_project_status_delivered] group by project_id) s_deliver,
+	(select min(audit_date) as when, project_id from im_projects_status_audit
+	where project_status_id=[im_project_status_invoiced] group by project_id) s_invoice,
+	(select min(audit_date) as when, project_id from im_projects_status_audit
+	where project_status_id in (
+		[im_project_status_closed],[im_project_status_canceled],[im_project_status_declined]
+	) group by project_id) s_close,
+    "
+
+    set status_select "
+	s_create.when as create_date,
+	s_open.when as open_date,
+	s_quote.when as quote_date,
+	s_deliver.when as deliver_date,
+	s_invoice.when as invoice_date,
+	s_close.when as close_date,
+    "
+
+    set status_where "
+	and p.project_id=s_create.project_id(+)
+	and p.project_id=s_quote.project_id(+)
+	and p.project_id=s_open.project_id(+)
+	and p.project_id=s_deliver.project_id(+)
+	and p.project_id=s_invoice.project_id(+)
+	and p.project_id=s_close.project_id(+)
+    "
+
+
+    set sql "
+	SELECT
+		p.*,
+	        c.company_name,
+		to_char(p.start_date, 'YYYY') as start_year,
+		to_char(p.end_date, 'YYYY') as end_year,
+		to_char(p.start_date, 'MM') as start_month,
+		to_char(p.end_date, 'MM') as end_month,
+		tree_level(p.tree_sortkey) as subproject_level,
+	        im_name_from_user_id(p.project_lead_id) as lead_name,
+		im_email_from_user_id(p.project_lead_id) as lead_email,
+		im_project_nr_from_id(p.parent_id) as parent_project_nr,
+	        im_category_from_id(p.project_type_id) as project_type,
+	        im_category_from_id(p.project_status_id) as project_status,
+	        im_category_from_id(p.on_track_status_id) as on_track_status,
+	        im_category_from_id(p.billing_type_id) as billing_type,
+	        to_char(end_date, 'HH24:MI') as end_date_time
+	FROM
+		im_projects p,
+		im_companies c
+	WHERE
+		p.company_id = c.company_id
+		$where_clause
+    "
+
+    # ---------------------------------------------------------------
+    append table_header_html "<tr>\n"
+    set csv_header ""
+    foreach col $column_headers {
+	# Generate a header line for CSV export
+	if {"" != $csv_header} { append csv_header $csv_separator }
+	append csv_header "\"[ad_quotehtml $col]\""
+    }
+    
+    # ---------------------------------------------------------------
+    set ctr 0
+    set csv_body ""
+    db_foreach projects_info_query $sql {
+	
+	set csv_line ""
+	foreach column_var $column_vars {
+	    set ttt ""
+	    if {"" != $csv_line} { append csv_line $csv_separator }
+	    set cmd "set ttt $column_var"
+	    eval "$cmd"
 	    append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
 	}
 	append csv_line "\r\n"
