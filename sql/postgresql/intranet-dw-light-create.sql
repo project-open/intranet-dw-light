@@ -44,7 +44,7 @@ BEGIN
         null,                   -- context_id
         ''intranet-dw-light'',     -- package_name
         ''companies_admin_csv'',    -- label
-        ''Export Companies CSV'',    -- name
+        ''Export Company Cube'',    -- name
         ''/intranet-dw-light/companies.csv'', -- url
         10,                     -- sort_order
         v_admin_menu,            -- parent_menu_id
@@ -96,7 +96,7 @@ BEGIN
         null,                   -- context_id
         ''intranet-dw-light'',     -- package_name
         ''projects_admin_csv'',    -- label
-        ''Export Projects CSV'',    -- name
+        ''Export Project Cube'',    -- name
         ''/intranet-dw-light/projects.csv'', -- url
         10,                     -- sort_order
         v_admin_menu,            -- parent_menu_id
@@ -149,7 +149,7 @@ BEGIN
         null,                   -- context_id
         ''intranet-dw-light'',     -- package_name
         ''invoices_customers_csv'',    -- label
-        ''Export Customer Invoices CSV'',    -- name
+        ''Export Customer Invoice Cube'',    -- name
         ''/intranet-dw-light/invoices.csv?cost_type_id=3708'', -- url
         990,                     -- sort_order
         v_main_menu,            -- parent_menu_id
@@ -202,7 +202,7 @@ BEGIN
         null,                   -- context_id
         ''intranet-dw-light'',     -- package_name
         ''invoices_providers_csv'',    -- label
-        ''Export Provider Invoices CSV'',    -- name
+        ''Export Provider Invoice Cube'',    -- name
         ''/intranet-dw-light/invoices.csv?cost_type_id=3710'', -- url
         990,                     -- sort_order
         v_main_menu,            -- parent_menu_id
