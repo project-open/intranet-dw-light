@@ -3,8 +3,10 @@
 
   <msg key="Export_Companies_CSV">Export Companies CSV</msg>
   <msg key="Export_Company_Cube">Export Company Cube</msg>
+  <msg key="Export_Customer_Invoice_Cube">Export Customer Invoice Cube</msg>
   <msg key="Export_Customer_Invoices_CSV">Export Customer Invoices CSV</msg>
   <msg key="Export_Project_Cube">Export Project Cube</msg>
   <msg key="Export_Projects_CSV">Export Projects CSV</msg>
+  <msg key="Export_Provider_Invoice_Cube">Export Provider Invoice Cube</msg>
   <msg key="Export_Provider_Invoices_CSV">Export Provider Invoices CSV</msg>
 </message_catalog>
