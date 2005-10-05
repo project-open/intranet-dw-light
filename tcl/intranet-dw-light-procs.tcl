@@ -288,9 +288,12 @@ ad_proc im_projects_csv1 {
 } {
     ns_log Notice "im_companies_csv: "
     set current_user_id [ad_maybe_redirect_for_registration]
-    set user_is_admin_p [im_is_user_site_wide_or_intranet_admin $current_user_id]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
-    if {!$user_is_admin_p} {
+
+    set view_invoices [im_permission $current_user_id view_invoices]
+    set view_projects_all [im_permission $current_user_id view_projects_all]
+    set perm [expr $view_invoices && $view_projects_all]
+    if {!$view_invoices || !$view_projects_all} {
 	ad_return_complaint 1 "<li>[_ intranet-core.lt_You_have_insufficient_6]"
 	return
     }
