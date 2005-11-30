@@ -64,6 +64,10 @@ ad_proc im_dw_light_handler { } {
 	    return [im_invoices_csv1]
 	}
 
+	timesheet {
+	    return [im_timesheet_csv1]
+	}
+
 	default {
 	    ad_return_complaint 1 "Invalid file name<br>
             You have specified an invalid file name."
@@ -472,6 +476,197 @@ ad_proc im_projects_csv1 {
     
     set app_type "application/csv"
 #    set app_type "text/plain"
+    set charset "latin1"
+
+    # For some reason we have to send out a "hard" HTTP
+    # header. ns_return and ns_respond don't seem to convert
+    # the content string into the right Latin1 encoding.
+    # So we do this manually here...
+    set all_the_headers "HTTP/1.0 200 OK
+MIME-Version: 1.0
+Content-Type: $app_type; charset=$charset\r\n"
+    util_WriteWithExtraOutputHeaders $all_the_headers
+
+    ns_write $string_latin1
+
+}
+
+
+# -----------------------------------------------------------
+# Timesheet CSV Export
+# -----------------------------------------------------------
+
+
+ad_proc im_timesheet_csv { } {  
+    Returns a "broad" CSV file particularly designed to be
+    Pivot-Table friendly.
+} {
+    return [im_timesheet_csv1]
+}
+
+
+ad_proc im_timesheet_csv1 {
+    { -view_name "timesheet_csv" }
+    { -project_id 0 } 
+    { -company_id 0 } 
+} {
+    Returns a "broad" CSV file particularly designed to be
+    Pivot-Table friendly.
+} {
+    ns_log Notice "im_timesheet_csv: "
+    set current_user_id [ad_maybe_redirect_for_registration]
+    set today [lindex [split [ns_localsqltimestamp] " "] 0]
+
+    set view_hours_all [im_permission $current_user_id view_hours_all]
+    if {!$view_hours_all} {
+	ad_return_complaint 1 "<li>[_ intranet-core.lt_You_have_insufficient_6]"
+	return
+    }
+
+    set csv_separator ";"
+    
+    # ---------------------------------------------------------------
+    # Define the column headers and column contents that 
+    # we want to show:
+    #
+    set view_id [db_string get_view_id "
+	select view_id 
+	from im_views 
+	where view_name=:view_name
+    " -default 0]
+    
+    set column_headers [list]
+    set column_vars [list]
+    
+    set column_sql "
+	select	column_name,
+		column_render_tcl,
+		visible_for
+	from	im_view_columns
+	where	view_id=:view_id
+		and group_id is null
+	order by
+		sort_order
+    "
+    
+    db_foreach column_list_sql $column_sql {
+	if {"" == $visible_for || [eval $visible_for]} {
+	    lappend column_headers "$column_name"
+	    lappend column_vars "$column_render_tcl"
+	}
+    }
+
+
+    # ---------------------------------------------------------------
+    # 5. Generate SQL Query
+    # ---------------------------------------------------------------
+    
+    set criteria [list]
+    if { ![empty_string_p $company_id] && $company_id != 0 } {
+	lappend criteria "p.company_id = :company_id"
+    }
+    if { ![empty_string_p $project_id] && $project_id != 0 } {
+	lappend criteria "h.project_id = :project_id"
+    }
+
+    set where_clause [join $criteria " and\n            "]
+    if { ![empty_string_p $where_clause] } {
+	set where_clause " and $where_clause"
+    }
+
+    set timesheet2_select ""
+    set timesheet2_from ""
+    set timesheet2_where ""
+    if {[db_table_exists im_timesheet_tasks]} {
+
+	set timesheet2_select "
+	    t.task_id as timesheet_task_id,
+	    m.material_name,
+	    m.material_nr,
+	    im_category_from_id(t.task_type_id) as timesheet_task_type,
+	    im_category_from_id(t.task_status_id) as timesheet_task_status,
+	    im_category_from_id(t.uom_id) as timesheet_task_uom,
+"
+        set timesheet2_from ", im_timesheet_tasks t, im_materials m"
+        set timesheet2_where "and h.timesheet_task_id = t.task_id and t.material_id = m.material_id"
+    }
+
+    
+    set sql "
+	SELECT
+		$timesheet2_select
+		h.hours,
+		h.day,
+		h.note,
+		to_char(h.day, 'YYYY-MM-DD') as day_formatted,
+		p.project_id,
+		p.project_name,
+		p.project_nr,
+                im_category_from_id(p.project_type_id) as project_type,
+		c.company_id as customer_id,
+	        c.company_name as customer_name,
+		c.company_path as customer_path,
+		u.user_id,
+		u.first_names,
+		u.last_name,
+		u.email
+	FROM
+		im_hours h,
+		im_projects p,
+		im_companies c,
+		cc_users u
+		$timesheet2_from
+	WHERE
+		h.project_id = p.project_id
+		and p.company_id = c.company_id
+		and h.user_id = u.user_id
+		$timesheet2_where
+		$where_clause
+    "
+
+    # ---------------------------------------------------------------
+    append table_header_html "<tr>\n"
+    set csv_header ""
+    foreach col $column_headers {
+	# Generate a header line for CSV export
+	if {"" != $csv_header} { append csv_header $csv_separator }
+	append csv_header "\"[ad_quotehtml $col]\""
+    }
+
+
+    # ---------------------------------------------------------------
+    # Set variables for Timesheet2
+    set timesheet_task_id 0
+    set timesheet_material ""
+    set timesheet_material ""
+    set timesheet_task_type ""
+    set timesheet_task_status ""
+    set timesheet_uom ""
+    set timesheet_task_cost_center ""
+    
+    # ---------------------------------------------------------------
+    set ctr 0
+    set csv_body ""
+    db_foreach timesheet_info_query $sql {
+	
+	set csv_line ""
+	foreach column_var $column_vars {
+	    set ttt ""
+	    if {"" != $csv_line} { append csv_line $csv_separator }
+	    set cmd "set ttt $column_var"
+	    eval "$cmd"
+	    append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
+	}
+	append csv_line "\r\n"
+	append csv_body $csv_line
+	
+	incr ctr
+    }
+
+    set string "$csv_header\r\n$csv_body\r\n"
+    set string_latin1 [encoding convertto "iso8859-1" $string]
+    
+    set app_type "application/csv"
     set charset "latin1"
 
     # For some reason we have to send out a "hard" HTTP
