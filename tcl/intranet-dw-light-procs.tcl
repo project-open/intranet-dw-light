@@ -747,7 +747,70 @@ ad_proc im_invoices_csv1 {
 	    lappend column_vars "$column_render_tcl"
 	}
     }
-    
+
+
+    # ---------------------------------------------------------------
+    # Add column_definitions for DynField Vars of the the customer
+
+    set object_type "im_company"
+    set attributes_sql "
+        select a.attribute_id,
+                a.table_name as attribute_table_name,
+                tt.id_column as attribute_id_column,
+                a.attribute_name,
+                a.pretty_name,
+                a.datatype,
+                case when a.min_n_values = 0 then 'f' else 't' end as required_p,
+                a.default_value,
+                t.table_name as object_type_table_name,
+                t.id_column as object_type_id_column,
+                aw.widget,
+                aw.parameters,
+                im_category_from_id(aw.storage_type_id) as storage_type
+        from
+                im_dynfield_attributes aa,
+                im_dynfield_widgets aw,
+                acs_object_types t,
+                acs_attributes a left outer join acs_object_type_tables tt on (
+                        tt.object_type = :object_type
+                        and tt.table_name = a.table_name
+                )
+        where
+                t.object_type = :object_type
+                and a.object_type = t.object_type
+                and a.attribute_id = aa.acs_attribute_id
+                and aa.widget_name = aw.widget_name
+                and im_object_permission_p(aa.attribute_id, :current_user_id, 'read') = 't'
+        order by
+                aa.attribute_id
+    "
+
+    set dynfield_select ""
+    db_foreach attributes $attributes_sql {
+
+	ns_log Notice "dw-light: im_invoices_csv1: attribute_name=$attribute_name, datatype=$datatype, widget=$widget, storage_type=$storage_type"
+	    
+	lappend column_headers $pretty_name
+	lappend column_vars "\$$attribute_name"
+	
+
+	switch $storage_type {
+
+	    value - date - default {
+
+		# Translate company fields to the customers table
+		if {[string equal $attribute_table_name "im_companies"]} { set attribute_table_name "c" }
+		append dynfield_select "$attribute_table_name.$attribute_name,\n"
+		
+	    }
+	    
+	    multimap {
+		ad_return_complaint 1 "ToDo: Multimap values not supported yet"
+	    }
+
+	}
+    }
+
     # ---------------------------------------------------------------
     # Generate SQL Query
     
@@ -792,6 +855,7 @@ ad_proc im_invoices_csv1 {
     set sql "
 	select
 	        i.*,
+		$dynfield_select
 		(to_date(to_char(i.invoice_date,:date_format),:date_format) 
 			+ i.payment_days) as due_date_calculated,
 		o.object_type,
@@ -833,35 +897,6 @@ ad_proc im_invoices_csv1 {
 		$where_clause
 		$extra_where
     "
-
-
-    # ---------------------------------------------------------------
-    # Format the List Table Header
-    
-    set column_headers [list]
-    set column_vars [list]
-    
-    set column_sql "
-	select
-		column_name,
-		column_render_tcl,
-		visible_for
-	from
-		im_view_columns
-	where
-		view_id=:view_id
-		and group_id is null
-	order by
-		sort_order
-    "
-    
-    db_foreach column_list_sql $column_sql {
-	if {"" == $visible_for || [eval $visible_for]} {
-	    lappend column_headers "$column_name"
-	    lappend column_vars "$column_render_tcl"
-	}
-    }
-
 
     # ---------------------------------------------------------------
     # Set up colspan to be the number of headers + 1 for the # column
