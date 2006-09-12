@@ -16,6 +16,10 @@ extra_select, extra_where, sort_order, visible_for) values (
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
+3402,34,NULL,'CostCenter','$cost_center_code','','',2,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
 3404,34,NULL,'Provider','$provider_name','','',4,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,

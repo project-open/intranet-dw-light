@@ -872,6 +872,7 @@ ad_proc im_invoices_csv1 {
 	      	im_name_from_user_id(i.company_contact_id) as company_contact_name,
 	      	im_name_from_user_id(i.payment_method_id) as payment_method,
 	      	im_cost_center_name_from_id(ci.cost_center_id) as cost_center,
+	      	im_cost_center_code_from_id(ci.cost_center_id) as cost_center_code,
 	        c.company_name as customer_name,
 	        c.company_path as company_short_name,
 		p.company_name as provider_name,
@@ -918,6 +919,9 @@ ad_proc im_invoices_csv1 {
     set csv_body ""
    
     db_foreach invoices_info_query $sql {
+
+	set read_p [im_cost_center_read_p $cost_center_id $cost_type_id $current_user_id]
+	if {!$read_p} { continue }
 
 	set csv_line ""
 	foreach column_var $column_vars {
