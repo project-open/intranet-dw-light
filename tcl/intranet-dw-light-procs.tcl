@@ -713,10 +713,9 @@ ad_proc im_invoices_csv1 {
     }
     set csv_separator ";"
     set amp "&"
-    set cur_format "99,999.99"
-    set cur_format "99999999.99"
+    set cur_format [im_l10n_sql_currency_format]
+    set date_format [im_l10n_sql_date_format]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
-    set date_format "YYYY-MM-DD"
 
 
     # ---------------------------------------------------------------
