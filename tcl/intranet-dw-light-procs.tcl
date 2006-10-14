@@ -247,6 +247,11 @@ ad_proc im_companies_csv1 {
 	incr ctr
     }
 
+
+    # !! This code only works with aolserver4.0. !!
+    # The older server (aolserver3.3oacs) doesn't handle
+    # encodings correctly.
+    #
     set string "$csv_header\r\n$csv_body\r\n"
     set string_latin1 [encoding convertto "iso8859-1" $string]
     
