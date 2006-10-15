@@ -253,11 +253,31 @@ ad_proc im_companies_csv1 {
     # encodings correctly.
     #
     set string "$csv_header\r\n$csv_body\r\n"
-    set string_latin1 [encoding convertto "iso8859-1" $string]
+
+    # TCL Encoding - UTF-8 or not?
+    set tcl_encoding [parameter::get_from_package_key \
+			  -package_key intranet-dw-light \
+			  -parameter CsvTclCharacterEncoding \
+			  -default "iso8859-1" \
+    ]
+
+    set string_latin1 [encoding convertto $tcl_encoding $string]
     
-    set app_type "application/csv"
-#    set app_type "text/plain"
-    set charset "latin1"
+    # Content-Type field for HTTP
+    set app_type [parameter::get_from_package_key \
+			-package_key intranet-dw-light \
+			-parameter CsvContentType \
+			-default "application/csv" \
+    ]
+
+
+    # HTTP character set
+    set charset [parameter::get_from_package_key \
+			-package_key intranet-dw-light \
+			-parameter CsvHttpCharacterEncoding \
+			-default "iso-8859-1" \
+    ]
+
 
     # For some reason we have to send out a "hard" HTTP
     # header. ns_return and ns_respond don't seem to convert
