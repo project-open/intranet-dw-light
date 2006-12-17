@@ -221,10 +221,9 @@ drop function inline_0 ();
 
 
 
-
-
 \i ../common/companies-export.sql
 \i ../common/projects-export.sql
 \i ../common/invoices-export.sql
 \i ../common/timesheet-export.sql
+\i ../common/users-export.sql
 

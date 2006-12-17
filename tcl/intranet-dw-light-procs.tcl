@@ -52,22 +52,11 @@ ad_proc im_dw_light_handler { } {
     }
 
     switch $file_body {
-	companies {
-	    return [im_companies_csv1]
-	}
-
-	projects {
-	    return [im_projects_csv1]
-	}
-
-	invoices {
-	    return [im_invoices_csv1]
-	}
-
-	timesheet {
-	    return [im_timesheet_csv1]
-	}
-
+	companies { return [im_companies_csv1] }
+	projects { return [im_projects_csv1] }
+	invoices { return [im_invoices_csv1] }
+	timesheet { return [im_timesheet_csv1] }
+	users { return [im_users_csv1] }
 	default {
 	    ad_return_complaint 1 "Invalid file name<br>
             You have specified an invalid file name."
@@ -140,6 +129,13 @@ ad_proc im_companies_csv1 {
 	}
     }
 
+    # Add DynField variables to the view
+    # The function returns two lists, for "headers" and "vars"
+    set lol [im_dynfield::append_attributes_to_im_view -object_type "im_company"]
+    set column_headers [concat $column_headers [lindex $lol 0]]
+    set column_vars [concat $column_vars [lindex $lol 1]]
+
+
     # ---------------------------------------------------------------
     # Ket's generate the sql query
     set criteria [list]
@@ -148,15 +144,15 @@ ad_proc im_companies_csv1 {
     if { $status_id > 0 } {
 	ns_set put $bind_vars status_id $status_id
 	lappend criteria "c.company_status_id in (
-	        select  category_id
-	        from    im_categories
-	        where   category_id= :status_id
+		select  category_id
+		from    im_categories
+		where   category_id= :status_id
 	      UNION
-	        select distinct
-	                child_id
-	        from    im_category_hierarchy
-	        where   parent_id = :status_id
-        )"
+		select distinct
+			child_id
+		from    im_category_hierarchy
+		where   parent_id = :status_id
+	)"
     }
 
     if { 0 != $user_id_from_search} {
@@ -189,7 +185,7 @@ ad_proc im_companies_csv1 {
 	set extra_table ", [join $extra_tables ","]"
     }
 
-    set where_clause [join $criteria " and\n            "]
+    set where_clause [join $criteria " and\n	    "]
     if { ![empty_string_p $where_clause] } {
 	set where_clause " and $where_clause"
     }
@@ -204,14 +200,14 @@ ad_proc im_companies_csv1 {
 		im_email_from_user_id(c.accounting_contact_id) as accounting_contact_email,
 		im_name_from_user_id(c.primary_contact_id) as company_contact_name,
 		im_email_from_user_id(c.primary_contact_id) as company_contact_email,
-	        im_category_from_id(c.company_type_id) as company_type,
-	        im_category_from_id(c.company_status_id) as company_status,
-	        im_category_from_id(c.annual_revenue_id) as annual_revenue
+		im_category_from_id(c.company_type_id) as company_type,
+		im_category_from_id(c.company_status_id) as company_status,
+		im_category_from_id(c.annual_revenue_id) as annual_revenue
 	from 
 		im_offices o,
 		im_companies c $extra_table
 	where
-	        c.main_office_id = o.office_id
+		c.main_office_id = o.office_id
 		$where_clause
     "
 
@@ -358,10 +354,17 @@ ad_proc im_projects_csv1 {
     
     db_foreach column_list_sql $column_sql {
 	if {"" == $visible_for || [eval $visible_for]} {
-	    lappend column_headers "$column_name"
-	    lappend column_vars "$column_render_tcl"
+	    lappend column_headers $column_name
+	    lappend column_vars $column_render_tcl
 	}
     }
+
+
+    # Add DynField variables to the view
+    # The function returns two lists, for "headers" and "vars"
+    set lol [im_dynfield::append_attributes_to_im_view -object_type "im_project"]
+    set column_headers [concat $column_headers [lindex $lol 0]]
+    set column_vars [concat $column_vars [lindex $lol 1]]
 
 
     # ---------------------------------------------------------------
@@ -394,7 +397,7 @@ ad_proc im_projects_csv1 {
 	lappend criteria "p.company_id=:company_id"
     }
 
-    set where_clause [join $criteria " and\n            "]
+    set where_clause [join $criteria " and\n	    "]
     if { ![empty_string_p $where_clause] } {
 	set where_clause " and $where_clause"
     }
@@ -446,20 +449,20 @@ ad_proc im_projects_csv1 {
     set sql "
 	SELECT
 		p.*,
-	        c.company_name,
+		c.company_name,
 		to_char(p.start_date, 'YYYY') as start_year,
 		to_char(p.end_date, 'YYYY') as end_year,
 		to_char(p.start_date, 'MM') as start_month,
 		to_char(p.end_date, 'MM') as end_month,
 		tree_level(p.tree_sortkey) as subproject_level,
-	        im_name_from_user_id(p.project_lead_id) as lead_name,
+		im_name_from_user_id(p.project_lead_id) as lead_name,
 		im_email_from_user_id(p.project_lead_id) as lead_email,
 		im_project_nr_from_id(p.parent_id) as parent_project_nr,
-	        im_category_from_id(p.project_type_id) as project_type,
-	        im_category_from_id(p.project_status_id) as project_status,
-	        im_category_from_id(p.on_track_status_id) as on_track_status,
-	        im_category_from_id(p.billing_type_id) as billing_type,
-	        to_char(end_date, 'HH24:MI') as end_date_time
+		im_category_from_id(p.project_type_id) as project_type,
+		im_category_from_id(p.project_status_id) as project_status,
+		im_category_from_id(p.on_track_status_id) as on_track_status,
+		im_category_from_id(p.billing_type_id) as billing_type,
+		to_char(end_date, 'HH24:MI') as end_date_time
 	FROM
 		im_projects p,
 		im_companies c
@@ -594,7 +597,7 @@ ad_proc im_timesheet_csv1 {
 	lappend criteria "h.project_id = :project_id"
     }
 
-    set where_clause [join $criteria " and\n            "]
+    set where_clause [join $criteria " and\n	    "]
     if { ![empty_string_p $where_clause] } {
 	set where_clause " and $where_clause"
     }
@@ -612,8 +615,8 @@ ad_proc im_timesheet_csv1 {
 	    im_category_from_id(t.task_status_id) as timesheet_task_status,
 	    im_category_from_id(t.uom_id) as timesheet_task_uom,
 "
-        set timesheet2_from ", im_timesheet_tasks t, im_materials m"
-        set timesheet2_where "and h.timesheet_task_id = t.task_id and t.material_id = m.material_id"
+	set timesheet2_from ", im_timesheet_tasks t, im_materials m"
+	set timesheet2_where "and h.timesheet_task_id = t.task_id and t.material_id = m.material_id"
     }
 
     
@@ -627,9 +630,9 @@ ad_proc im_timesheet_csv1 {
 		p.project_id,
 		p.project_name,
 		p.project_nr,
-                im_category_from_id(p.project_type_id) as project_type,
+		im_category_from_id(p.project_type_id) as project_type,
 		c.company_id as customer_id,
-	        c.company_name as customer_name,
+		c.company_name as customer_name,
 		c.company_path as customer_path,
 		u.user_id,
 		u.first_names,
@@ -773,67 +776,19 @@ ad_proc im_invoices_csv1 {
     }
 
 
-    # ---------------------------------------------------------------
-    # Add column_definitions for DynField Vars of the the customer
+    # Add DynField variables to the view
+    # The function returns two lists, for "headers" and "vars"
+    set lol [im_dynfield::append_attributes_to_im_view -object_type "im_cost"]
+    set column_headers [concat $column_headers [lindex $lol 0]]
+    set column_vars [concat $column_vars [lindex $lol 1]]
 
-    set object_type "im_company"
-    set attributes_sql "
-        select a.attribute_id,
-                a.table_name as attribute_table_name,
-                tt.id_column as attribute_id_column,
-                a.attribute_name,
-                a.pretty_name,
-                a.datatype,
-                case when a.min_n_values = 0 then 'f' else 't' end as required_p,
-                a.default_value,
-                t.table_name as object_type_table_name,
-                t.id_column as object_type_id_column,
-                aw.widget,
-                aw.parameters,
-                im_category_from_id(aw.storage_type_id) as storage_type
-        from
-                im_dynfield_attributes aa,
-                im_dynfield_widgets aw,
-                acs_object_types t,
-                acs_attributes a left outer join acs_object_type_tables tt on (
-                        tt.object_type = :object_type
-                        and tt.table_name = a.table_name
-                )
-        where
-                t.object_type = :object_type
-                and a.object_type = t.object_type
-                and a.attribute_id = aa.acs_attribute_id
-                and aa.widget_name = aw.widget_name
-                and im_object_permission_p(aa.attribute_id, :current_user_id, 'read') = 't'
-        order by
-                aa.attribute_id
-    "
 
-    set dynfield_select ""
-    db_foreach attributes $attributes_sql {
-
-	ns_log Notice "dw-light: im_invoices_csv1: attribute_name=$attribute_name, datatype=$datatype, widget=$widget, storage_type=$storage_type"
-	    
-	lappend column_headers $pretty_name
-	lappend column_vars "\$$attribute_name"
-	
-
-	switch $storage_type {
-
-	    value - date - default {
-
-		# Translate company fields to the customers table
-		if {[string equal $attribute_table_name "im_companies"]} { set attribute_table_name "c" }
-		append dynfield_select "$attribute_table_name.$attribute_name,\n"
-		
-	    }
-	    
-	    multimap {
-		ad_return_complaint 1 "ToDo: Multimap values not supported yet"
-	    }
-
-	}
-    }
+    # Add DynField variables to the view
+    # The function returns two lists, for "headers" and "vars"
+    set lol [im_dynfield::append_attributes_to_im_view -object_type "im_company" -table_prefix "c."]
+    set column_headers [concat $column_headers [lindex $lol 0]]
+    set column_vars [concat $column_vars [lindex $lol 1]]
+    set company_dynfield_select [join [lindex $lol 2] " "]
 
     # ---------------------------------------------------------------
     # Generate SQL Query
@@ -857,7 +812,7 @@ ad_proc im_invoices_csv1 {
 	lappend criteria "i.provider_id=:provider_id"
     }
     
-    set where_clause [join $criteria " and\n            "]
+    set where_clause [join $criteria " and\n	    "]
     if { ![empty_string_p $where_clause] } {
 	set where_clause " and $where_clause"
     }
@@ -878,8 +833,8 @@ ad_proc im_invoices_csv1 {
     
     set sql "
 	select
-	        i.*,
-		$dynfield_select
+		i.*,
+		$company_dynfield_select
 		(to_date(to_char(i.invoice_date,:date_format),:date_format) 
 			+ i.payment_days) as due_date_calculated,
 		o.object_type,
@@ -897,28 +852,28 @@ ad_proc im_invoices_csv1 {
 	      	im_name_from_user_id(i.payment_method_id) as payment_method,
 	      	im_cost_center_name_from_id(ci.cost_center_id) as cost_center,
 	      	im_cost_center_code_from_id(ci.cost_center_id) as cost_center_code,
-	        c.company_name as customer_name,
-	        c.company_path as company_short_name,
+		c.company_name as customer_name,
+		c.company_path as company_short_name,
 		p.company_name as provider_name,
 		p.company_path as provider_short_name,
-	        im_category_from_id(i.invoice_status_id) as invoice_status,
-	        im_category_from_id(i.cost_type_id) as invoice_type,
+		im_category_from_id(i.invoice_status_id) as invoice_status,
+		im_category_from_id(i.cost_type_id) as invoice_type,
 		to_date(:today, :date_format) 
 			- (to_date(to_char(i.invoice_date, :date_format),:date_format) 
 			+ i.payment_days) as overdue
 		$extra_select
 	from
-	        im_invoices_active i,
-	        im_costs ci,
+		im_invoices_active i,
+		im_costs ci,
 		acs_objects o,
-	        im_companies c,
-	        im_companies p
+		im_companies c,
+		im_companies p
 		$extra_from
 	where
 		i.invoice_id = o.object_id
 		and i.invoice_id = ci.cost_id
 	 	and i.customer_id=c.company_id
-	        and i.provider_id=p.company_id
+		and i.provider_id=p.company_id
 		$where_clause
 		$extra_where
     "
@@ -966,6 +921,171 @@ ad_proc im_invoices_csv1 {
     
     set app_type "application/csv"
 #    set app_type "text/plain"
+    set charset "latin1"
+
+    # For some reason we have to send out a "hard" HTTP
+    # header. ns_return and ns_respond don't seem to convert
+    # the content string into the right Latin1 encoding.
+    # So we do this manually here...
+    set all_the_headers "HTTP/1.0 200 OK
+MIME-Version: 1.0
+Content-Type: $app_type; charset=$charset\r\n"
+    util_WriteWithExtraOutputHeaders $all_the_headers
+
+    ns_write $string_latin1
+
+}
+
+
+
+
+# -----------------------------------------------------------
+# Users CSV Export
+# -----------------------------------------------------------
+
+
+ad_proc im_users_csv1 {
+    { -member_state "approved" }
+    { -view_name "user_csv" }
+} {  
+    Returns a "broad" CSV file particularly designed to be
+    Pivot-Table friendly.
+} {
+    set current_user_id [ad_get_user_id]
+    if {![im_permission $current_user_id view_users]} {
+	ad_return_complaint 1 "<li>You have insufficiente privileges to view this page"
+	return
+    }
+    set csv_separator ";"
+    set amp "&"
+    set cur_format [im_l10n_sql_currency_format]
+    set date_format [im_l10n_sql_date_format]
+    set today [lindex [split [ns_localsqltimestamp] " "] 0]
+
+
+    # ---------------------------------------------------------------
+    # Define the column headers and column contents that 
+    # we want to show:
+    #
+    set view_id [db_string get_view_id "select view_id from im_views where view_name=:view_name" -default 0]
+    set column_headers [list]
+    set column_vars [list]
+
+    set column_sql "
+	select	column_name,
+		column_render_tcl,
+		visible_for
+	from	im_view_columns
+	where	view_id=:view_id
+		and group_id is null
+	order by sort_order
+    "
+
+    db_foreach column_list_sql $column_sql {
+	if {"" == $visible_for || [eval $visible_for]} {
+	    lappend column_headers "$column_name"
+	    lappend column_vars "$column_render_tcl"
+	}
+    }
+
+    # Add DynField variables to the view
+    # The function returns two lists, for "headers" and "vars"
+    set lol [im_dynfield::append_attributes_to_im_view -object_type "person"]
+    set column_headers [concat $column_headers [lindex $lol 0]]
+    set column_vars [concat $column_vars [lindex $lol 1]]
+
+    # ---------------------------------------------------------------
+    # Generate SQL Query
+    
+    set criteria [list]
+    if {"" !=  $member_state} {
+	lappend criteria "member_state = :member_state"
+    }
+    
+    set where_clause [join $criteria " and\n	    "]
+    if { ![empty_string_p $where_clause] } {
+	set where_clause " and $where_clause"
+    }
+    
+    set extra_select ""
+    set extra_from ""
+    
+
+    # -----------------------------------------------------------------
+    # Main SQL
+
+    set sql "
+	SELECT 
+		pa.*,
+		pe.*,
+		u.user_id,
+		u.username,
+		u.screen_name,
+		mr.member_state,
+		uc.*,
+		e.*,
+		im_cost_center_name_from_id(e.department_id) as department,
+		im_name_from_user_id(e.supervisor_id) as supervisor_name
+		$extra_select
+	FROM
+		parties pa,
+		persons pe,
+		users u
+		LEFT OUTER JOIN users_contact uc ON (u.user_id = uc.user_id)
+		LEFT OUTER JOIN im_employees e ON (u.user_id = e.employee_id),
+		group_member_map m,
+		membership_rels mr
+		$extra_from
+	WHERE
+		pa.party_id = pe.person_id
+		AND pe.person_id = u.user_id
+		AND u.user_id = m.member_id
+		AND m.group_id = acs__magic_object_id('registered_users')
+		AND m.rel_id = mr.rel_id
+		AND m.container_id = m.group_id
+		AND m.rel_type = 'membership_rel'
+		$where_clause
+    "
+
+    # ---------------------------------------------------------------
+    # Set up colspan to be the number of headers + 1 for the # column
+
+    set csv_header ""
+    foreach col $column_headers {
+	
+	# Generate a header line for CSV export. Header uses the
+	# non-localized text so that it's identical in all languages.
+	if {"" != $csv_header} { append csv_header $csv_separator }
+	append csv_header "\"[ad_quotehtml $col]\""
+	
+    }
+    
+    # ---------------------------------------------------------------
+    # Format the Result Data
+    
+    set ctr 0
+    set csv_body ""
+   
+    db_foreach users_info_query $sql {
+
+	set csv_line ""
+	foreach column_var $column_vars {
+	    set ttt ""
+	    if {"" != $csv_line} { append csv_line $csv_separator }
+	    set cmd "set ttt $column_var"
+	    eval "$cmd"
+	    append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
+	}
+	append csv_line "\r\n"
+	append csv_body $csv_line
+	
+	incr ctr
+    }
+
+    set string "$csv_header\r\n$csv_body\r\n"
+    set string_latin1 [encoding convertto "iso8859-1" $string]
+    
+    set app_type "application/csv"
     set charset "latin1"
 
     # For some reason we have to send out a "hard" HTTP
