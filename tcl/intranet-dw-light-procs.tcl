@@ -1025,7 +1025,8 @@ ad_proc im_users_csv1 {
 		uc.*,
 		e.*,
 		im_cost_center_name_from_id(e.department_id) as department,
-		im_name_from_user_id(e.supervisor_id) as supervisor_name
+		im_name_from_user_id(e.supervisor_id) as supervisor_name,
+		im_profiles_from_user_id(u.user_id) as profiles
 		$extra_select
 	FROM
 		parties pa,
