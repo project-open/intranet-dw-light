@@ -602,27 +602,14 @@ ad_proc im_timesheet_csv1 {
 	set where_clause " and $where_clause"
     }
 
-    set timesheet2_select ""
-    set timesheet2_from ""
-    set timesheet2_where ""
-    if {[db_table_exists im_timesheet_tasks]} {
-
-	set timesheet2_select "
-	    t.task_id as timesheet_task_id,
-	    m.material_name,
-	    m.material_nr,
-	    im_category_from_id(t.task_type_id) as timesheet_task_type,
-	    im_category_from_id(t.task_status_id) as timesheet_task_status,
-	    im_category_from_id(t.uom_id) as timesheet_task_uom,
-"
-	set timesheet2_from ", im_timesheet_tasks t, im_materials m"
-	set timesheet2_where "and h.timesheet_task_id = t.task_id and t.material_id = m.material_id"
-    }
-
-    
     set sql "
 	SELECT
-		$timesheet2_select
+		t.task_id as timesheet_task_id,
+		m.material_name,
+		m.material_nr,
+		im_category_from_id(p.project_type_id) as timesheet_task_type,
+		im_category_from_id(p.project_status_id) as timesheet_task_status,
+		im_category_from_id(t.uom_id) as timesheet_task_uom,
 		h.hours,
 		h.day,
 		h.note,
@@ -639,16 +626,16 @@ ad_proc im_timesheet_csv1 {
 		u.last_name,
 		u.email
 	FROM
+		im_projects p
+		LEFT OUTER JOIN im_timesheet_tasks t on (p.project_id = t.task_id)
+		LEFT OUTER JOIN im_materials m ON (t.material_id = m.material_id),
 		im_hours h,
-		im_projects p,
 		im_companies c,
 		cc_users u
-		$timesheet2_from
 	WHERE
 		h.project_id = p.project_id
 		and p.company_id = c.company_id
 		and h.user_id = u.user_id
-		$timesheet2_where
 		$where_clause
     "
 
