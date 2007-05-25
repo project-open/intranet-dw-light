@@ -143,16 +143,7 @@ ad_proc im_companies_csv1 {
     set bind_vars [ns_set create]
     if { $status_id > 0 } {
 	ns_set put $bind_vars status_id $status_id
-	lappend criteria "c.company_status_id in (
-		select  category_id
-		from    im_categories
-		where   category_id= :status_id
-	      UNION
-		select distinct
-			child_id
-		from    im_category_hierarchy
-		where   parent_id = :status_id
-	)"
+	lappend criteria "c.company_status_id in ([join [im_sub_categories $status_id] ","])"
     }
 
     if { 0 != $user_id_from_search} {
@@ -166,17 +157,8 @@ ad_proc im_companies_csv1 {
     }
 
     if { $type_id > 0 } {
-	    ns_set put $bind_vars type_id $type_id
-	    lappend criteria "c.company_type_id in (
-		select	category_id
-		from	im_categories
-		where	category_id= :type_id
-	      UNION
-		select distinct
-			child_id
-		from	im_category_hierarchy
-		where	parent_id = :type_id
-	      )"
+	ns_set put $bind_vars type_id $type_id
+	lappend criteria "c.company_type_id in ([join [im_sub_categories $type_id] ","])"
     }
 
     set extra_tables [list]
@@ -373,24 +355,12 @@ ad_proc im_projects_csv1 {
     
     set criteria [list]
     if { ![empty_string_p $project_status_id] && $project_status_id > 0 } {
-	lappend criteria "p.project_status_id in (
-	select :project_status_id from dual
-	UNION
-	select child_id
-	from im_category_hierarchy
-	where parent_id = :project_status_id
-    )"
+	lappend criteria "p.project_status_id in ([join [im_sub_categories $project_status_id] ","])"
     }
 
     if { ![empty_string_p $project_type_id] && $project_type_id != 0 } {
 	# Select the specified project type and its subtypes
-	lappend criteria "p.project_type_id in (
-	select :project_type_id from dual
-	UNION
-	select child_id 
-	from im_category_hierarchy
-	where parent_id = :project_type_id
-    )"
+	lappend criteria "p.project_type_id in ([join [im_sub_categories $project_type_id] ","])"
     }
     
     if { ![empty_string_p $company_id] && $company_id != 0 } {
@@ -786,11 +756,7 @@ ad_proc im_invoices_csv1 {
     }
     
     if { ![empty_string_p $cost_type_id] && $cost_type_id != 0 } {
-	lappend criteria "i.cost_type_id in (
-		select distinct	h.child_id
-		from	im_category_hierarchy h
-		where	(child_id=:cost_type_id or parent_id=:cost_type_id)
-	)"
+	lappend criteria "i.cost_type_id in ([join [im_sub_categories $cost_type_id] ","])"
     }
     if { ![empty_string_p $customer_id] && $customer_id != 0 } {
 	lappend criteria "i.customer_id=:customer_id"
