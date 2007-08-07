@@ -30,7 +30,16 @@ ad_proc im_dw_light_handler { } {
     set query [ns_conn query]
     set user_id [ad_maybe_redirect_for_registration]
 
-    ns_log Notice "im_dw_light_handler: url=$url"
+    # Convert vars into hash
+    set vars_hash [array get {}]
+    set pairs [split $query "&"]
+    foreach pair $pairs {
+	set var_val [split $pair "="]
+	set var [lindex $var_val 0]
+	set val [lindex $var_val 1]
+	set var_hash($var) $val
+    }
+    set vars [array get var_hash]
 
     # Serve page. Example:
     # /intranet-dw-light/invoices.csv?cost_type_id=1234
@@ -51,12 +60,14 @@ ad_proc im_dw_light_handler { } {
 	return
     }
 
+    ns_log Notice "im_dw_light_handler: url=$url, body=$file_body, ext=$file_ext, query=$query, vars=$vars"
+
     switch $file_body {
-	companies { return [im_companies_csv1] }
-	projects { return [im_projects_csv1] }
-	invoices { return [im_invoices_csv1] }
-	timesheet { return [im_timesheet_csv1] }
-	users { return [im_users_csv1] }
+	companies { return [im_companies_csv1 -vars $vars] }
+	projects { return [im_projects_csv1 -vars $vars] }
+	invoices { return [im_invoices_csv1 -vars $vars] }
+	timesheet { return [im_timesheet_csv1 -vars $vars] }
+	users { return [im_users_csv1 -vars $vars] }
 	default {
 	    ad_return_complaint 1 "Invalid file name<br>
             You have specified an invalid file name."
@@ -81,10 +92,11 @@ ad_proc im_companies_csv { } {
 
 
 ad_proc im_companies_csv1 {
-    { -status_id 0 }
-    { -type_id 0 }
+    { -company_status_id 0 }
+    { -company_type_id 0 }
     { -user_id_from_search 0}
     { -view_name "company_csv" }
+    { -vars "" }
 } {  
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
@@ -96,6 +108,12 @@ ad_proc im_companies_csv1 {
 	ad_return_complaint 1 "<li>[_ intranet-core.lt_You_have_insufficient_6]"
 	return
     }
+
+    array set var_hash $vars
+    if {[info exists var_hash(company_status_id)]} { set company_status_id $var_hash(company_status_id) }
+    if {[info exists var_hash(company_type_id)]} { set company_type_id $var_hash(company_type_id) }
+    if {[info exists var_hash(user_id_from_search)]} { set user_id_from_search $var_hash(user_id_from_search) }
+    if {[info exists var_hash(view_name)]} { set view_name $var_hash(view_name) }
 
     set csv_separator ";"
     
@@ -141,9 +159,9 @@ ad_proc im_companies_csv1 {
     set criteria [list]
 
     set bind_vars [ns_set create]
-    if { $status_id > 0 } {
-	ns_set put $bind_vars status_id $status_id
-	lappend criteria "c.company_status_id in ([join [im_sub_categories $status_id] ","])"
+    if { $company_status_id > 0 } {
+	ns_set put $bind_vars company_status_id $company_status_id
+	lappend criteria "c.company_status_id in ([join [im_sub_categories $company_status_id] ","])"
     }
 
     if { 0 != $user_id_from_search} {
@@ -156,9 +174,9 @@ ad_proc im_companies_csv1 {
 	"
     }
 
-    if { $type_id > 0 } {
-	ns_set put $bind_vars type_id $type_id
-	lappend criteria "c.company_type_id in ([join [im_sub_categories $type_id] ","])"
+    if { $company_type_id > 0 } {
+	ns_set put $bind_vars company_type_id $company_type_id
+	lappend criteria "c.company_type_id in ([join [im_sub_categories $company_type_id] ","])"
     }
 
     set extra_tables [list]
@@ -289,6 +307,7 @@ ad_proc im_projects_csv1 {
     { -project_status_id 0 } 
     { -project_type_id 0 } 
     { -company_id 0 } 
+    { -vars "" }
 } {  
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
@@ -304,6 +323,12 @@ ad_proc im_projects_csv1 {
 	ad_return_complaint 1 "<li>[_ intranet-core.lt_You_have_insufficient_6]"
 	return
     }
+
+    array set var_hash $vars
+    if {[info exists var_hash(view_name)]} { set view_name $var_hash(view_name) }
+    if {[info exists var_hash(project_status_id)]} { set project_status_id $var_hash(project_status_id) }
+    if {[info exists var_hash(project_type_id)]} { set project_type_id $var_hash(project_type_id) }
+    if {[info exists var_hash(company_id)]} { set company_id $var_hash(company_id) }
 
     set csv_separator ";"
     
@@ -504,9 +529,12 @@ ad_proc im_timesheet_csv { } {
 
 
 ad_proc im_timesheet_csv1 {
+    { -vars "" }
     { -view_name "timesheet_csv" }
     { -project_id 0 } 
     { -company_id 0 } 
+    { -start_date "" }
+    { -end_date "" }
 } {
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
@@ -520,6 +548,13 @@ ad_proc im_timesheet_csv1 {
 	ad_return_complaint 1 "<li>[_ intranet-core.lt_You_have_insufficient_6]"
 	return
     }
+
+    array set var_hash $vars
+    if {[info exists var_hash(company_id)]} { set company_id $var_hash(company_id) }
+    if {[info exists var_hash(project_id)]} { set project_id $var_hash(project_id) }
+    if {[info exists var_hash(view_name)]} { set view_name $var_hash(view_name) }
+    if {[info exists var_hash(start_date)]} { set start_date $var_hash(start_date) }
+    if {[info exists var_hash(end_date)]} { set end_date $var_hash(end_date) }
 
     set csv_separator ";"
     
@@ -566,6 +601,12 @@ ad_proc im_timesheet_csv1 {
     if { ![empty_string_p $project_id] && $project_id != 0 } {
 	lappend criteria "h.project_id = :project_id"
     }
+    if { ![empty_string_p $start_date]} {
+	lappend criteria "h.day > to_timestamp(:start_date, 'YYYY-MM-DD')"
+    }
+    if { ![empty_string_p $end_date]} {
+	lappend criteria "h.day > to_timestamp(:end_date, 'YYYY-MM-DD')"
+    }
 
     set where_clause [join $criteria " and\n	    "]
     if { ![empty_string_p $where_clause] } {
@@ -574,27 +615,28 @@ ad_proc im_timesheet_csv1 {
 
     set sql "
 	SELECT
-		t.task_id as timesheet_task_id,
-		m.material_name,
-		m.material_nr,
-		im_category_from_id(p.project_type_id) as timesheet_task_type,
-		im_category_from_id(p.project_status_id) as timesheet_task_status,
-		im_category_from_id(t.uom_id) as timesheet_task_uom,
 		h.hours,
 		h.day,
-		h.note,
+		h.note as hours_note,
 		to_char(h.day, 'YYYY-MM-DD') as day_formatted,
+		u.*,
+		e.*,
+		supervisor.email as supervisor_email,
+		im_name_from_user_id(supervisor.party_id) as supervisor_name,
+		cc.*,
 		p.project_id,
 		p.project_name,
 		p.project_nr,
 		im_category_from_id(p.project_type_id) as project_type,
+		im_category_from_id(p.project_type_id) as timesheet_task_type,
+		im_category_from_id(p.project_status_id) as timesheet_task_status,
+		im_category_from_id(t.uom_id) as timesheet_task_uom,
+		t.task_id as timesheet_task_id,
+		m.material_name,
+		m.material_nr,
 		c.company_id as customer_id,
 		c.company_name as customer_name,
-		c.company_path as customer_path,
-		u.user_id,
-		u.first_names,
-		u.last_name,
-		u.email
+		c.company_path as customer_path
 	FROM
 		im_projects p
 		LEFT OUTER JOIN im_timesheet_tasks t on (p.project_id = t.task_id)
@@ -602,6 +644,9 @@ ad_proc im_timesheet_csv1 {
 		im_hours h,
 		im_companies c,
 		cc_users u
+		LEFT OUTER JOIN im_employees e ON (u.user_id = e.employee_id)
+		LEFT OUTER JOIN im_cost_centers cc ON (e.department_id = cc.cost_center_id)
+		LEFT OUTER JOIN parties supervisor ON (e.supervisor_id = supervisor.party_id)
 	WHERE
 		h.project_id = p.project_id
 		and p.company_id = c.company_id
@@ -687,7 +732,8 @@ ad_proc im_invoices_csv1 {
     { -customer_id 0 }
     { -provider_id 0 }
     { -view_name "invoice_csv" }
-} {  
+    { -vars "" }
+} {
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
 } {
@@ -702,6 +748,12 @@ ad_proc im_invoices_csv1 {
     set date_format [im_l10n_sql_date_format]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
 
+    array set var_hash $vars
+    if {[info exists var_hash(customer_id)]} { set customer_id $var_hash(customer_id) }
+    if {[info exists var_hash(provider_id)]} { set provider_id $var_hash(provider_id) }
+    if {[info exists var_hash(cost_status_id)]} { set cost_status_id $var_hash(cost_status_id) }
+    if {[info exists var_hash(cost_type_id)]} { set cost_type_id $var_hash(cost_type_id) }
+    if {[info exists var_hash(view_name)]} { set view_name $var_hash(view_name) }
 
     # ---------------------------------------------------------------
     # Define the column headers and column contents that 
@@ -900,6 +952,7 @@ Content-Type: $app_type; charset=$charset\r\n"
 ad_proc im_users_csv1 {
     { -member_state "approved" }
     { -view_name "user_csv" }
+    { -vars "" }
 } {  
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
@@ -914,6 +967,10 @@ ad_proc im_users_csv1 {
     set cur_format [im_l10n_sql_currency_format]
     set date_format [im_l10n_sql_date_format]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
+
+    array set var_hash $vars
+    if {[info exists var_hash(view_name)]} { set view_name $var_hash(view_name) }
+    if {[info exists var_hash(member_state)]} { set member_state $var_hash(member_state) }
 
 
     # ---------------------------------------------------------------

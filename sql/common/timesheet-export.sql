@@ -13,6 +13,10 @@ delete from im_view_columns where view_id=205;
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
+20500,205,NULL,'Username','$username','','',0,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
 20501,205,NULL,'First','$first_names','','',1,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
@@ -25,31 +29,47 @@ extra_select, extra_where, sort_order, visible_for) values (
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20507,205,NULL,'Date','$day_formatted','','',7,'');
+20507,205,NULL,'Supervisor','$supervisor_name','','',7,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20508,205,NULL,'Project','$project_name','','',8,'');
+20509,205,NULL,'Hourly Cost','$hourly_cost','','',9,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20509,205,NULL,'Project Nr','$project_nr','','',9,'');
+205011,205,NULL,'Cost Center Code','$cost_center_code','','',11,'');
+
+
+
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20521,205,NULL,'Customer','$customer_name','','',21,'');
+20521,205,NULL,'Date','$day_formatted','','',21,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20523,205,NULL,'Customer Nr','$customer_path','','',23,'');
+20523,205,NULL,'Project Nr','$project_nr','','',23,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20525,205,NULL,'Project','$project_name','','',25,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20527,205,NULL,'Customer Nr','$customer_path','','',27,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20529,205,NULL,'Customer','$customer_name','','',29,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
 20531,205,NULL,'Hours','$hours','','',31,'');
 
+
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20533,205,NULL,'Note','$note','','',33,'');
+20599,205,NULL,'Note','$hours_note','','',99,'');
 
 
 
