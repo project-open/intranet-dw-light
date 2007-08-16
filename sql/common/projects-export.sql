@@ -36,6 +36,20 @@ insert into im_view_columns (column_id, view_id, group_id, column_name, column_r
 extra_select, extra_where, sort_order, visible_for) values (
 2409,24,NULL,'Type','$project_type','','',9,'');
 
+
+
+
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+2411,24,NULL,'PM','$lead_name','','',11,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+2413,24,NULL,'Key Account','$keyacc_name','','',13,'');
+
+
+
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
 2421,24,NULL,'Status','$project_status','','',21,'');

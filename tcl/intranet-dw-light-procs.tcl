@@ -445,6 +445,8 @@ ad_proc im_projects_csv1 {
 	SELECT
 		p.*,
 		c.company_name,
+		im_name_from_user_id(c.manager_id) as keyacc_name,
+		im_email_from_user_id(c.manager_id) as keyacc_email,
 		to_char(p.start_date, 'YYYY') as start_year,
 		to_char(p.end_date, 'YYYY') as end_year,
 		to_char(p.start_date, 'MM') as start_month,
