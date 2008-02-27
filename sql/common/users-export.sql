@@ -15,23 +15,18 @@ delete from im_view_columns where view_id=14;
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
 1400,14,NULL,'First Names','$first_names','','',0,'');
-
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
 1405,14,NULL,'Last Name','$last_name','','',5,'');
-
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
 1410,14,NULL,'Email','$email','','',10,'');
-
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
 1413,14,NULL,'Profiles','$profiles','','',13,'');
-
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
 1415,14,NULL,'URL','$url','','',15,'');
-
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
 1420,14,NULL,'Status','$member_state','','',20,'');
