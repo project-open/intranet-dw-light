@@ -9,7 +9,7 @@
     <singleton-p>t</singleton-p>
     <auto-mount>intranet-dw-light</auto-mount>
 
-    <version name="3.4.0.0.0" url="http://projop.dnsalias.com/download/apm/intranet-dw-light-3.4.0.0.0.apm">
+    <version name="3.4.0.1.0" url="http://projop.dnsalias.com/download/apm/intranet-dw-light-3.4.0.1.0.apm">
         <owner url="mailto:frank.bergmann@project-open.com">Frank Bergmann</owner>
         <summary>A Data Warehouse &quot;Light&quot; system that exports important business objects in a specific &quot;broad&quot; type of CSV format suitable to be used with Pivot Tables of Microsoft Excel</summary>
         <vendor url="http://www.project-open.com/">]project-open[</vendor>
