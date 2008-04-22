@@ -229,6 +229,9 @@ ad_proc im_companies_csv1 {
     set csv_body ""
     db_foreach projects_info_query $sql {
 	
+        # compatibility with older versions
+        set project_lead $lead_name
+
 	set csv_line ""
 	foreach column_var $column_vars {
 	    set ttt ""
