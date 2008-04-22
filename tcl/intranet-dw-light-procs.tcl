@@ -481,6 +481,9 @@ ad_proc im_projects_csv1 {
     set ctr 0
     set csv_body ""
     db_foreach projects_info_query $sql {
+
+	# compatibility with older versions
+	set project_lead $lead_name
 	
 	set csv_line ""
 	foreach column_var $column_vars {
