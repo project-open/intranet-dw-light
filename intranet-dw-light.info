@@ -15,11 +15,11 @@
         <vendor url="http://www.project-open.com/">]project-open[</vendor>
         <description format="text/plain">This module provides several Data Warehouse &quot;cubes&quot; about Projects, Customers, Invoicing and Timesheet by means of CSV export pages. The export format already includes denormalized information from related tables just like a &quot;Star Scheme&quot; of a Data Warehouse. The exported data are presented formatted in a way that allows for immediate conversion into a Pivot Table.</description>
 
-        <provides url="intranet-dw-light" version="3.2.2.0.0"/>
-        <requires url="intranet-core" version="3.2.0"/>
-        <requires url="intranet-cost" version="3.2.0"/>
-        <requires url="intranet-dynfield" version="3.2.0"/>
-        <requires url="intranet-invoices" version="3.2.0"/>
+        <provides url="intranet-dw-light" version="3.4.0.2.0"/>
+        <requires url="intranet-core" version="3.4.0.0.0"/>
+        <requires url="intranet-cost" version="3.4.0.0.0"/>
+        <requires url="intranet-dynfield" version="3.4.0.0.0"/>
+        <requires url="intranet-invoices" version="3.4.0.0.0"/>
 
         <callbacks>
         </callbacks>
