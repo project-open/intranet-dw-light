@@ -48,6 +48,18 @@ extra_select, extra_where, sort_order, visible_for) values (
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
+20518,205,NULL,'Top Project Name','$top_project_name','','',18,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20519,205,NULL,'Parent Project Nr','$parent_project_nr','','',19,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20520,205,NULL,'Parent Project Name','$parent_project_name','','',20,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
 3421,34,NULL,'Status','$invoice_status','','',21,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
