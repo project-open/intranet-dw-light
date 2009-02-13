@@ -632,6 +632,10 @@ ad_proc im_timesheet_csv1 {
 		p.project_id,
 		p.project_name,
 		p.project_nr,
+		parent_p.project_name as parent_project_name,
+		parent_p.project_nr as parent_project_nr,
+		top_p.project_name as top_project_name,
+		top_p.project_nr as top_project_nr,
 		im_category_from_id(p.project_type_id) as project_type,
 		im_category_from_id(p.project_type_id) as timesheet_task_type,
 		im_category_from_id(p.project_status_id) as timesheet_task_status,
@@ -644,10 +648,12 @@ ad_proc im_timesheet_csv1 {
 		c.company_path as customer_path
 	FROM
 		im_projects p
+                LEFT OUTER JOIN im_projects parent_p ON (p.parent_id = parent_p.project_id)
 		LEFT OUTER JOIN im_timesheet_tasks t on (p.project_id = t.task_id)
 		LEFT OUTER JOIN im_materials m ON (t.material_id = m.material_id),
 		im_hours h,
 		im_companies c,
+                im_projects top_p,
 		cc_users u
 		LEFT OUTER JOIN im_employees e ON (u.user_id = e.employee_id)
 		LEFT OUTER JOIN im_cost_centers cc ON (e.department_id = cc.cost_center_id)
@@ -656,6 +662,7 @@ ad_proc im_timesheet_csv1 {
 		h.project_id = p.project_id
 		and p.company_id = c.company_id
 		and h.user_id = u.user_id
+		and top_p.tree_sortkey = tree_ancestor_key(p.tree_sortkey, 1)
 		$where_clause
     "
 

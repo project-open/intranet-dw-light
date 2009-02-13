@@ -39,20 +39,33 @@ insert into im_view_columns (column_id, view_id, group_id, column_name, column_r
 extra_select, extra_where, sort_order, visible_for) values (
 205011,205,NULL,'Cost Center Code','$cost_center_code','','',11,'');
 
-
-
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20513,205,NULL,'Date','$day_formatted','','',13,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20521,205,NULL,'Date','$day_formatted','','',21,'');
+20515,205,NULL,'Top Project Nr','$top_project_nr','','',15,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20523,205,NULL,'Project Nr','$project_nr','','',23,'');
+20517,205,NULL,'Top Project Name','$top_project_name','','',17,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-20525,205,NULL,'Project','$project_name','','',25,'');
+20519,205,NULL,'Parent Project Nr','$parent_project_nr','','',19,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20521,205,NULL,'Parent Project Name','$parent_project_name','','',21,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20523,205,NULL,'Task Nr','$project_nr','','',23,'');
+
+insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
+extra_select, extra_where, sort_order, visible_for) values (
+20525,205,NULL,'Task Name','$project_name','','',25,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
