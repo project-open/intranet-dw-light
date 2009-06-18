@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message_catalog package_key="intranet-dw-light" package_version="3.4.0.6.0" locale="no_NO" charset="ISO-8859-1">
+
+  <msg key="Export_Companies_CSV">Eksporter Selskaper CSV</msg>
+  <msg key="Export_Projects_CSV">Export Projects CSV</msg>
+  <msg key="Export_Timesheet_Cube">Eksporter timeliste kube</msg>
+</message_catalog>

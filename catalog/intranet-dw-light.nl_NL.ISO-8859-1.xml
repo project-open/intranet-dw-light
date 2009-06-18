@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message_catalog package_key="intranet-dw-light" package_version="3.4.0.6.0" locale="nl_NL" charset="ISO-8859-1">
+
+  <msg key="Export_Companies_CSV">Exporteer bedrijf CSV</msg>
+  <msg key="Export_Projects_CSV">Exporteer projecten CSV</msg>
+  <msg key="Export_Timesheet_Cube">Exporteer urenlijsten</msg>
+</message_catalog>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message_catalog package_key="intranet-dw-light" package_version="3.4.0.6.0" locale="ja_JP" charset="utf-8">
+
+  <msg key="Export_Companies_CSV">CSVへ企業の移出</msg>
+  <msg key="Export_Customer_Invoice_Cube">顧客請求書をエクスポートする</msg>
+  <msg key="Export_Customer_Invoices_CSV">企業の各請求書をCSV出力する。</msg>
+  <msg key="Export_Projects_CSV">CSVへプロジェクトの移出</msg>
+  <msg key="Export_Provider_Invoice_Cube">業者請求書をエクスポートする</msg>
+  <msg key="Export_Provider_Invoices_CSV">業者請求書をCSV出力する</msg>
+  <msg key="Export_Timesheet_Cube">タイムシートをエクスポートする</msg>
+</message_catalog>
