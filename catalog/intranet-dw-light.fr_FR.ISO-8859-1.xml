@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-dw-light" package_version="3.3.1.0.0" locale="fr_FR" charset="ISO-8859-1">
+<message_catalog package_key="intranet-dw-light" package_version="3.4.0.6.0" locale="fr_FR" charset="ISO-8859-1">
 
   <msg key="Export_Companies_CSV">Exporter les Sociétés en un fichier CSV </msg>
   <msg key="Export_Company_Cube">Exporter un Cube des sociétés</msg>
-  <msg key="Export_Cube_Facturation_AbaKus">Export Cube Facture AbaKus CSV</msg>
   <msg key="Export_Customer_Invoice_Cube">Exporter un Cube des factures clients</msg>
   <msg key="Export_Customer_Invoices_CSV">Exporter les Factures Client en un fichier CSV</msg>
   <msg key="Export_Project_Cube">Exporter un Cube des Projets</msg>
@@ -11,8 +10,4 @@
   <msg key="Export_Provider_Invoice_Cube">Exporter un Cube des factures fournisseur</msg>
   <msg key="Export_Provider_Invoices_CSV">Exporter les Factures Fournisseur en un fichier CSV</msg>
   <msg key="Export_Timesheet_Cube">Exporter un Cube des heures consommées</msg>
-  <msg key="Exporter_Projets_au_format_CSV">Exporter Projets au format CSV</msg>
-  <msg key="Exporter_Projets_CSV">Exporter les Projets en un fichier CSV</msg>
-  <msg key="Exporter_Sociétés_au_format_CSV">Exporter Sociétés au format CSV</msg>
-  <msg key="Exporter_Sociétés_CSV">Exporter les Sociétés en un fichier CSV</msg>
 </message_catalog>

@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-dw-light" package_version="3.1.2.0.0" locale="pt_BR" charset="ISO-8859-1">
+<message_catalog package_key="intranet-dw-light" package_version="3.4.0.6.0" locale="pt_BR" charset="ISO-8859-1">
 
-  <msg key="Export_Companies_CSV">Exportar arquivo CSV das Empresas</msg>
-  <msg key="Export_Company_Cube">Exportar Cubo das Empresas</msg>
-  <msg key="Export_Customer_Invoice_Cube">Exportar Cubo das Faturas</msg>
-  <msg key="Export_Customer_Invoices_CSV">Exportar arquivo CSV das Faturas do Clientes</msg>
-  <msg key="Export_Project_Cube">Exportar Cubo do Projeto</msg>
-  <msg key="Export_Projects_CSV">Exportar arquivo CSV dos Projetos</msg>
-  <msg key="Export_Provider_Invoice_Cube">Esportar Cubo das Faturas dos Fornecedores</msg>
-  <msg key="Export_Provider_Invoices_CSV">Exportar arquivo CSV das Faturas dos Fornecedores</msg>
+  <msg key="Export_Timesheet_Cube">Exportar Cubo do Timesheet</msg>
 </message_catalog>
