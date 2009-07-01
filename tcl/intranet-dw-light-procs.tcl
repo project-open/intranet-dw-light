@@ -250,30 +250,14 @@ ad_proc im_companies_csv1 {
     #
     set string "$csv_header\r\n$csv_body\r\n"
 
-    # TCL Encoding - UTF-8 or not?
-    set tcl_encoding [parameter::get_from_package_key \
-			  -package_key intranet-dw-light \
-			  -parameter CsvTclCharacterEncoding \
-			  -default "iso8859-1" \
-    ]
+    # TCL Encoding, application type and character set - iso8859-1 or UTF-8?
+    set tcl_encoding [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvTclCharacterEncoding -default "iso8859-1" ]
+    set app_type [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvContentType -default "application/csv"]
+    set charset [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvHttpCharacterEncoding -default "iso-8859-1"]
 
-    set string_latin1 [encoding convertto $tcl_encoding $string]
-    
-    # Content-Type field for HTTP
-    set app_type [parameter::get_from_package_key \
-			-package_key intranet-dw-light \
-			-parameter CsvContentType \
-			-default "application/csv" \
-    ]
-
-
-    # HTTP character set
-    set charset [parameter::get_from_package_key \
-			-package_key intranet-dw-light \
-			-parameter CsvHttpCharacterEncoding \
-			-default "iso-8859-1" \
-    ]
-
+    if {"utf-8" == $tcl_encoding} { set string_latin1 $string} { else
+	set string_latin1 [encoding convertto $tcl_encoding $string]
+    }
 
     # For some reason we have to send out a "hard" HTTP
     # header. ns_return and ns_respond don't seem to convert
@@ -500,11 +484,15 @@ ad_proc im_projects_csv1 {
     }
 
     set string "$csv_header\r\n$csv_body\r\n"
-    set string_latin1 [encoding convertto "iso8859-1" $string]
-    
-    set app_type "application/csv"
-#    set app_type "text/plain"
-    set charset "latin1"
+
+    # TCL Encoding, application type and character set - iso8859-1 or UTF-8?
+    set tcl_encoding [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvTclCharacterEncoding -default "iso8859-1" ]
+    set app_type [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvContentType -default "application/csv"]
+    set charset [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvHttpCharacterEncoding -default "iso-8859-1"]
+
+    if {"utf-8" == $tcl_encoding} { set string_latin1 $string} { else
+	set string_latin1 [encoding convertto $tcl_encoding $string] 
+    }
 
     # For some reason we have to send out a "hard" HTTP
     # header. ns_return and ns_respond don't seem to convert
@@ -706,10 +694,15 @@ ad_proc im_timesheet_csv1 {
     }
 
     set string "$csv_header\r\n$csv_body\r\n"
-    set string_latin1 [encoding convertto "iso8859-1" $string]
-    
-    set app_type "application/csv"
-    set charset "latin1"
+
+    # TCL Encoding, application type and character set - iso8859-1 or UTF-8?
+    set tcl_encoding [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvTclCharacterEncoding -default "iso8859-1" ]
+    set app_type [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvContentType -default "application/csv"]
+    set charset [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvHttpCharacterEncoding -default "iso-8859-1"]
+
+    if {"utf-8" == $tcl_encoding} { set string_latin1 $string} { else
+	set string_latin1 [encoding convertto $tcl_encoding $string]
+    }
 
     # For some reason we have to send out a "hard" HTTP
     # header. ns_return and ns_respond don't seem to convert
@@ -934,11 +927,15 @@ ad_proc im_invoices_csv1 {
     }
 
     set string "$csv_header\r\n$csv_body\r\n"
-    set string_latin1 [encoding convertto "iso8859-1" $string]
-    
-    set app_type "application/csv"
-#    set app_type "text/plain"
-    set charset "latin1"
+
+    # TCL Encoding, application type and character set - iso8859-1 or UTF-8?
+    set tcl_encoding [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvTclCharacterEncoding -default "iso8859-1" ]
+    set app_type [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvContentType -default "application/csv"]
+    set charset [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvHttpCharacterEncoding -default "iso-8859-1"]
+
+    if {"utf-8" == $tcl_encoding} { set string_latin1 $string} { else
+	set string_latin1 [encoding convertto $tcl_encoding $string]
+    }
 
     # For some reason we have to send out a "hard" HTTP
     # header. ns_return and ns_respond don't seem to convert
@@ -1106,10 +1103,15 @@ ad_proc im_users_csv1 {
     }
 
     set string "$csv_header\r\n$csv_body\r\n"
-    set string_latin1 [encoding convertto "iso8859-1" $string]
-    
-    set app_type "application/csv"
-    set charset "latin1"
+
+    # TCL Encoding, application type and character set - iso8859-1 or UTF-8?
+    set tcl_encoding [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvTclCharacterEncoding -default "iso8859-1" ]
+    set app_type [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvContentType -default "application/csv"]
+    set charset [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvHttpCharacterEncoding -default "iso-8859-1"]
+
+    if {"utf-8" == $tcl_encoding} { set string_latin1 $string} { else
+	set string_latin1 [encoding convertto $tcl_encoding $string]
+    }
 
     # For some reason we have to send out a "hard" HTTP
     # header. ns_return and ns_respond don't seem to convert
