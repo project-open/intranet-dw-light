@@ -2,6 +2,12 @@
 <message_catalog package_key="intranet-dw-light" package_version="3.4.0.6.0" locale="nl_NL" charset="ISO-8859-1">
 
   <msg key="Export_Companies_CSV">Exporteer bedrijf CSV</msg>
+  <msg key="Export_Company_Cube">Exporteer bedrijfskubus</msg>
+  <msg key="Export_Customer_Invoice_Cube">Exporteer klant factuur kubus</msg>
+  <msg key="Export_Customer_Invoices_CSV">Exporteer klant facturen CSV</msg>
+  <msg key="Export_Project_Cube">Exporteer project kubus</msg>
   <msg key="Export_Projects_CSV">Exporteer projecten CSV</msg>
+  <msg key="Export_Provider_Invoice_Cube">Exporteer leverancier factuur kubus</msg>
+  <msg key="Export_Provider_Invoices_CSV">Exporteer leverancier facturen CSV</msg>
   <msg key="Export_Timesheet_Cube">Exporteer urenlijsten</msg>
 </message_catalog>
