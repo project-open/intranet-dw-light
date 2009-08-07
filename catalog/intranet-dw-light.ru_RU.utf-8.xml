@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<message_catalog package_key="intranet-dw-light" package_version="3.4.0.6.0" locale="ru_RU" charset="UTF-8">
+
+  <msg key="Export_Companies_CSV">Экспортировать компании в CSV</msg>
+  <msg key="Export_Company_Cube">Экспортировать куб компаний</msg>
+  <msg key="Export_Customer_Invoice_Cube">Экспортировать куб счетов-фактур клиентов</msg>
+  <msg key="Export_Customer_Invoices_CSV">Экспортировать счета-фактуры клиентов в CSV</msg>
+  <msg key="Export_Project_Cube">Экспортировать куб проектов</msg>
+  <msg key="Export_Projects_CSV">Экспортировать проекты в CSV</msg>
+  <msg key="Export_Provider_Invoice_Cube">Экспортировать счета-фактуры поставщиков в CSV</msg>
+  <msg key="Export_Provider_Invoices_CSV">Экспортировать счета-фактуры поставщиков в CSV</msg>
+  <msg key="Export_Timesheet_Cube">Экспортировать куб табелей</msg>
+</message_catalog>
