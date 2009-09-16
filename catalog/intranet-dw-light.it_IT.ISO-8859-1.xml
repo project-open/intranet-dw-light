@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-dw-light" package_version="3.4.0.6.0" locale="it_IT" charset="ISO-8859-1">
+<message_catalog package_key="intranet-dw-light" package_version="3.4.0.7.0" locale="it_IT" charset="ISO-8859-1">
 
   <msg key="Export_Companies_CSV">Esporta aziende in CSV </msg>
   <msg key="Export_Company_Cube">Esporta &quot;cubo&quot; aziende</msg>
@@ -9,5 +9,5 @@
   <msg key="Export_Projects_CSV">Esporta progetti in CSV</msg>
   <msg key="Export_Provider_Invoice_Cube">Esporta &quot;cubo&quot; fatture fornitori</msg>
   <msg key="Export_Provider_Invoices_CSV">Esporta fatture fornitori in CSV</msg>
-  <msg key="Export_Timesheet_Cube">Esporta &quot;cubo&quot; presenze</msg>
+  <msg key="Export_Timesheet_Cube">Esporta «cubo» presenze</msg>
 </message_catalog>
