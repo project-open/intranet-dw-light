@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message_catalog package_key="intranet-dw-light" package_version="3.4.0.7.0" locale="zh_CN" charset="utf-8">
+
+  <msg key="Export_Companies_CSV">导出公司CSV</msg>
+  <msg key="Export_Company_Cube">导出公司Cube</msg>
+  <msg key="Export_Customer_Invoice_Cube">导出顾客发票Cube</msg>
+  <msg key="Export_Customer_Invoices_CSV">导出顾客发票CSV</msg>
+  <msg key="Export_Project_Cube">导出项目Cube</msg>
+  <msg key="Export_Projects_CSV">导出项目CSV</msg>
+  <msg key="Export_Provider_Invoice_Cube">导出提供商发票Cube</msg>
+  <msg key="Export_Provider_Invoices_CSV">导出提供商发票CSV</msg>
+  <msg key="Export_Timesheet_Cube">导出时间表Cube</msg>
+</message_catalog>
