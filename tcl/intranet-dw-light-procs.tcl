@@ -1109,7 +1109,9 @@ ad_proc im_users_csv1 {
     set app_type [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvContentType -default "application/csv"]
     set charset [parameter::get_from_package_key -package_key intranet-dw-light -parameter CsvHttpCharacterEncoding -default "iso-8859-1"]
 
-    if {"utf-8" == $tcl_encoding} { set string_latin1 $string} { else
+    if {"utf-8" == $tcl_encoding} { 
+	set string_latin1 $string} 
+    else {
 	set string_latin1 [encoding convertto $tcl_encoding $string]
     }
 
