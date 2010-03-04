@@ -1119,7 +1119,7 @@ ad_proc im_users_csv1 {
 
     if {"utf-8" == $tcl_encoding} { 
 	set string_latin1 $string 
-    }else {
+    } else {
 	set string_latin1 [encoding convertto $tcl_encoding $string]
     }
 
