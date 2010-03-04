@@ -1101,7 +1101,7 @@ ad_proc im_users_csv1 {
 	    set ttt ""
 	    if {"" != $csv_line} { append csv_line $csv_separator }
 	    set cmd "set ttt $column_var"
-	    eval "$cmd"
+	    catch { eval "$cmd" }
 	    append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
 	}
 	append csv_line "\r\n"
