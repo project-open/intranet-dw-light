@@ -57,7 +57,7 @@ ad_proc im_dw_light_handler { } {
     if {![string equal $file_ext "csv"]} {
 	ad_return_complaint 1 "Invalid file extension<br>
         You have specified an invalid file extension."
-	return
+	ad_script_abort
     }
 
     ns_log Notice "im_dw_light_handler: url=$url, body=$file_body, ext=$file_ext, query=$query, vars=$vars"
@@ -71,7 +71,7 @@ ad_proc im_dw_light_handler { } {
 	default {
 	    ad_return_complaint 1 "Invalid file name<br>
             You have specified an invalid file name."
-	    return
+	    ad_script_abort
 	}
     }
 }
