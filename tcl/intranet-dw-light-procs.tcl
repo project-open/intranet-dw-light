@@ -358,7 +358,7 @@ ad_proc im_projects_csv1 {
     set lol [im_dynfield::append_attributes_to_im_view -object_type "im_project"]
     set column_headers [concat $column_headers [lindex $lol 0]]
     set column_vars [concat $column_vars [lindex $lol 1]]
-
+    set derefs [lindex $lol 2]
 
     # ---------------------------------------------------------------
     # 5. Generate SQL Query
@@ -430,6 +430,7 @@ ad_proc im_projects_csv1 {
     set sql "
 	SELECT
 		p.*,
+		[join $derefs "\n"]
 		c.company_name,
 		im_name_from_user_id(c.manager_id) as keyacc_name,
 		im_email_from_user_id(c.manager_id) as keyacc_email,
