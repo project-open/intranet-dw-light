@@ -355,10 +355,19 @@ ad_proc im_projects_csv1 {
 
     # Add DynField variables to the view
     # The function returns two lists, for "headers" and "vars"
-    set lol [im_dynfield::append_attributes_to_im_view -object_type "im_project"]
-    set column_headers [concat $column_headers [lindex $lol 0]]
-    set column_vars [concat $column_vars [lindex $lol 1]]
-    set derefs [lindex $lol 2]
+    set project_lol [im_dynfield::append_attributes_to_im_view -object_type "im_project"]
+    set project_column_headers	[lindex $project_lol 0]
+    set project_column_vars	[lindex $project_lol 1]
+    set project_derefs		[lindex $project_lol 2]
+
+    set task_lol [im_dynfield::append_attributes_to_im_view -object_type "im_timesheet_task"]
+    set task_column_headers	[lindex $task_lol 0]
+    set task_column_vars	[lindex $task_lol 1]
+    set task_derefs		[lindex $task_lol 2]
+
+    set column_headers [concat $column_headers $project_column_headers $task_column_headers]
+    set column_vars [concat $column_vars $project_column_vars $task_column_vars]
+    set derefs [concat $project_derefs $task_derefs]
 
     # ---------------------------------------------------------------
     # 5. Generate SQL Query
@@ -448,7 +457,8 @@ ad_proc im_projects_csv1 {
 		im_category_from_id(p.billing_type_id) as billing_type,
 		to_char(end_date, 'HH24:MI') as end_date_time
 	FROM
-		im_projects p,
+		im_projects p
+		LEFT OUTER JOIN im_timesheet_tasks t ON (p.project_id = t.task_id),
 		im_companies c
 	WHERE
 		p.company_id = c.company_id
