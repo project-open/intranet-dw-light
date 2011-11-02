@@ -459,7 +459,10 @@ ad_proc im_projects_csv1 {
 	FROM
 		im_projects p
 		LEFT OUTER JOIN im_timesheet_tasks t ON (p.project_id = t.task_id),
-		im_companies c
+		(select	company_id,
+			company_name,
+			manager_id
+		from	im_companies) c
 	WHERE
 		p.company_id = c.company_id
 		$where_clause
