@@ -123,6 +123,8 @@ ad_proc im_companies_csv1 {
     #
     set view_id [db_string get_view_id "select view_id from im_views where view_name=:view_name" -default 0]
     
+    # ad_return_complaint 1 $view_id
+
     set column_headers [list]
     set column_vars [list]
     
@@ -155,7 +157,7 @@ ad_proc im_companies_csv1 {
 
 
     # ---------------------------------------------------------------
-    # Ket's generate the sql query
+    # Let's generate the sql query
     set criteria [list]
 
     set bind_vars [ns_set create]
@@ -228,18 +230,20 @@ ad_proc im_companies_csv1 {
     set ctr 0
     set csv_body ""
     db_foreach projects_info_query $sql {
-	
 	set csv_line ""
 	foreach column_var $column_vars {
-	    set ttt ""
-	    if {"" != $csv_line} { append csv_line $csv_separator }
-	    set cmd "set ttt $column_var"
+            if [catch {
+		set ttt ""
+		if {"" != $csv_line} { append csv_line $csv_separator }
+		set cmd "set ttt $column_var"
 		eval "$cmd"
-	    append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
+		append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
+            } errmsg] {
+                ns_log ERROR "Error during exporting companies: variable $column_var not defined."
+            }
 	}
 	append csv_line "\r\n"
 	append csv_body $csv_line
-	
 	incr ctr
     }
 
@@ -298,6 +302,7 @@ ad_proc im_projects_csv1 {
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
 } {
+
     ns_log Notice "im_companies_csv: "
     set current_user_id [ad_maybe_redirect_for_registration]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
