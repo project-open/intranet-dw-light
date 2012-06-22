@@ -442,6 +442,11 @@ ad_proc im_projects_csv1 {
     "
 
 
+    set im_gantt_projects_sql ","
+    if {[im_table_exists im_gantt_projects]} {
+	set im_gantt_projects_sql "LEFT OUTER JOIN im_gantt_projects gp ON (p.project_id = gp.project_id),"
+    }
+
     set sql "
 	SELECT
 		p.*,
@@ -464,7 +469,8 @@ ad_proc im_projects_csv1 {
 		to_char(end_date, 'HH24:MI') as end_date_time
 	FROM
 		im_projects p
-		LEFT OUTER JOIN im_timesheet_tasks t ON (p.project_id = t.task_id),
+		LEFT OUTER JOIN im_timesheet_tasks t ON (p.project_id = t.task_id)
+		$im_gantt_projects_sql
 		(select	company_id,
 			company_name,
 			manager_id
