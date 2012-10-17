@@ -219,7 +219,6 @@ ad_proc im_companies_csv1 {
 				address_country_code,
 				contact_person_id
 			from	im_offices
-			where	office_id = c.main_office_id
 		) o,
 		im_companies c $extra_table
 	where
