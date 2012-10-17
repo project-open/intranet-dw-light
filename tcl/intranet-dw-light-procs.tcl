@@ -220,7 +220,7 @@ ad_proc im_companies_csv1 {
 				contact_person_id
 			from	im_offices
 			where	office_id = c.main_office_id
-		) o
+		) o,
 		im_companies c $extra_table
 	where
 		c.main_office_id = o.office_id
