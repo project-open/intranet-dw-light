@@ -207,7 +207,20 @@ ad_proc im_companies_csv1 {
 		im_category_from_id(c.company_status_id) as company_status,
 		im_category_from_id(c.annual_revenue_id) as annual_revenue
 	from 
-		im_offices o,
+		(	select	office_name,
+				office_path,
+				phone,
+				fax,
+				address_line1,
+				address_line2,
+				address_city,
+				address_state,
+				address_postal_code,
+				address_country_code,
+				contact_person_id
+			from	im_offices
+			where	office_id = c.main_office_id
+		) o
 		im_companies c $extra_table
 	where
 		c.main_office_id = o.office_id
