@@ -207,7 +207,8 @@ ad_proc im_companies_csv1 {
 		im_category_from_id(c.company_status_id) as company_status,
 		im_category_from_id(c.annual_revenue_id) as annual_revenue
 	from 
-		(	select	office_name,
+		(	select	office_id,
+				office_name,
 				office_path,
 				phone,
 				fax,
