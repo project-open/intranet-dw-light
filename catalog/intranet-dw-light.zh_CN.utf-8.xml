@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<message_catalog package_key="intranet-dw-light" package_version="3.4.0.7.0" locale="zh_CN" charset="utf-8">
+<message_catalog package_key="intranet-dw-light" locale="zh_CN" charset="utf-8">
 
   <msg key="Export_Companies_CSV">导出公司CSV</msg>
   <msg key="Export_Company_Cube">导出公司Cube</msg>

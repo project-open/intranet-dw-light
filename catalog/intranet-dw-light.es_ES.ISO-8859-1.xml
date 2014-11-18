@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<message_catalog package_key="intranet-dw-light" package_version="3.4.0.7.0" locale="es_ES" charset="ISO-8859-1">
+<message_catalog package_key="intranet-dw-light" locale="es_ES" charset="ISO-8859-1">
 
   <msg key="Export_Companies_CSV">Exportar .CSV de empresas</msg>
   <msg key="Export_Company_Cube">Exportar cubo de empresa</msg>
