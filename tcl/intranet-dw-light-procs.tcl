@@ -512,13 +512,21 @@ ad_proc im_projects_csv1 {
 	set project_lead $lead_name
 	
 	set csv_line ""
+
 	foreach column_var $column_vars {
-	    set ttt ""
-	    if {"" != $csv_line} { append csv_line $csv_separator }
-	    set cmd "set ttt $column_var"
-	    eval "$cmd"
-	    append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
+            if [catch {
+		set ttt ""
+		if {"" != $csv_line} { append csv_line $csv_separator }
+		set cmd "set ttt $column_var"
+		eval "$cmd"
+		append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
+	    } errmsg] {
+		global errorInfo
+                ns_log ERROR "Error during exporting companies: variable $column_var not defined. $errorInfo"
+		append csv_line "\"[lang::message::lookup "" intranet-dw-light.ColumnNotFound "Column: '$column_var' not found"]\""
+            }
 	}
+
 	append csv_line "\r\n"
 	append csv_body $csv_line
 	
