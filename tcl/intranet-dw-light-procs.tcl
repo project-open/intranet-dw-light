@@ -796,7 +796,7 @@ ad_proc im_invoices_csv1 {
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
 } {
-    set current_user_id [ad_get_user_id]
+    set current_user_id [ad_conn user_id]
     if {![im_permission $current_user_id view_invoices]} {
 	ad_return_complaint 1 "<li>You have insufficiente privileges to view this page"
 	return
@@ -1022,7 +1022,7 @@ ad_proc im_users_csv1 {
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
 } {
-    set current_user_id [ad_get_user_id]
+    set current_user_id [ad_conn user_id]
     if {![im_permission $current_user_id view_users]} {
 	ad_return_complaint 1 "<li>You have insufficiente privileges to view this page"
 	return
@@ -1198,7 +1198,7 @@ ad_proc im_vacation_csv {
     #   Defaults and Permissions 
     #-- ----------------------------------------------------------
 
-    set current_user_id [ad_get_user_id]
+    set current_user_id [ad_conn user_id]
     if {![im_permission $current_user_id view_absences_all ]} {
 	ad_return_complaint 1 "<li>You have insufficiente privileges to view this page"
 	return
