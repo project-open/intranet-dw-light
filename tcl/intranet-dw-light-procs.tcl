@@ -254,7 +254,7 @@ ad_proc im_companies_csv1 {
 		eval "$cmd"
 		append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
             } errmsg] {
-                ns_log ERROR "Error during exporting companies: variable $column_var not defined."
+                ns_log Error "Error during exporting companies: variable $column_var not defined."
             }
 	}
 	append csv_line "\r\n"
@@ -522,7 +522,7 @@ ad_proc im_projects_csv1 {
 		append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
 	    } errmsg] {
 		global errorInfo
-                ns_log ERROR "Error during exporting companies: variable $column_var not defined. $errorInfo"
+                ns_log Error "Error during exporting companies: variable $column_var not defined. $errorInfo"
 		append csv_line "\"[lang::message::lookup "" intranet-dw-light.ColumnNotFound "Column: '$column_var' not found"]\""
             }
 	}
