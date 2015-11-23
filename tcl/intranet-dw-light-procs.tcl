@@ -28,7 +28,7 @@ ad_proc im_dw_light_handler { } {
 } {
     set url [ns_conn url]
     set query [ns_conn query]
-    set user_id [ad_maybe_redirect_for_registration]
+    set user_id [auth::require_login]
 
     # Convert vars into hash
     set vars_hash [array get {}]
@@ -44,7 +44,7 @@ ad_proc im_dw_light_handler { } {
     # Serve page. Example:
     # /intranet-dw-light/invoices.csv?cost_type_id=1234
     set path_list [split $url {/}]
-    set len [expr [llength $path_list] - 1]
+    set len [expr {[llength $path_list] - 1}]
 
     # skip: +0:/ +1:intranet-dw-light, +2:filename
     set filename [lindex $path_list 2]
@@ -54,7 +54,7 @@ ad_proc im_dw_light_handler { } {
     set file_body [lindex $file_pieces 0]
     set file_ext [lindex $file_pieces 1]
 
-    if {![string equal $file_ext "csv"]} {
+    if {$file_ext ne "csv" } {
 	ad_return_complaint 1 "Invalid file extension<br>
         You have specified an invalid file extension."
 	ad_script_abort
@@ -103,7 +103,7 @@ ad_proc im_companies_csv1 {
     Pivot-Table friendly.
 } {
     ns_log Notice "im_companies_csv: "
-    set current_user_id [ad_maybe_redirect_for_registration]
+    set current_user_id [auth::require_login]
     set user_is_admin_p [im_is_user_site_wide_or_intranet_admin $current_user_id]
     if {!$user_is_admin_p} {
 	ad_return_complaint 1 "<li>[_ intranet-core.lt_You_have_insufficient_6]"
@@ -189,7 +189,7 @@ ad_proc im_companies_csv1 {
     }
 
     set where_clause [join $criteria " and\n	    "]
-    if { ![empty_string_p $where_clause] } {
+    if { $where_clause ne "" } {
 	set where_clause " and $where_clause"
     }
 
@@ -237,7 +237,7 @@ ad_proc im_companies_csv1 {
 	# Generate a header line for CSV export. Header uses the
 	# non-localized text so that it's identical in all languages.
 	if {"" != $csv_header} { append csv_header $csv_separator }
-	append csv_header "\"[ad_quotehtml $col]\""
+	append csv_header "\"[ns_quotehtml $col]\""
 	
     }
     
@@ -319,12 +319,12 @@ ad_proc im_projects_csv1 {
 } {
 
     ns_log Notice "im_companies_csv: "
-    set current_user_id [ad_maybe_redirect_for_registration]
+    set current_user_id [auth::require_login]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
 
     set view_invoices [im_permission $current_user_id view_invoices]
     set view_projects_all [im_permission $current_user_id view_projects_all]
-    set perm [expr $view_invoices && $view_projects_all]
+    set perm [expr {$view_invoices && $view_projects_all}]
     if {!$view_invoices || !$view_projects_all} {
 	ad_return_complaint 1 "<li>[_ intranet-core.lt_You_have_insufficient_6]"
 	return
@@ -394,21 +394,21 @@ ad_proc im_projects_csv1 {
     # ---------------------------------------------------------------
     
     set criteria [list]
-    if { ![empty_string_p $project_status_id] && $project_status_id > 0 } {
+    if { $project_status_id ne "" && $project_status_id > 0 } {
 	lappend criteria "p.project_status_id in ([join [im_sub_categories $project_status_id] ","])"
     }
 
-    if { ![empty_string_p $project_type_id] && $project_type_id != 0 } {
+    if { $project_type_id ne "" && $project_type_id != 0 } {
 	# Select the specified project type and its subtypes
 	lappend criteria "p.project_type_id in ([join [im_sub_categories $project_type_id] ","])"
     }
     
-    if { ![empty_string_p $company_id] && $company_id != 0 } {
+    if { $company_id ne "" && $company_id != 0 } {
 	lappend criteria "p.company_id=:company_id"
     }
 
     set where_clause [join $criteria " and\n	    "]
-    if { ![empty_string_p $where_clause] } {
+    if { $where_clause ne "" } {
 	set where_clause " and $where_clause"
     }
     
@@ -500,7 +500,7 @@ ad_proc im_projects_csv1 {
     foreach col $column_headers {
 	# Generate a header line for CSV export
 	if {"" != $csv_header} { append csv_header $csv_separator }
-	append csv_header "\"[ad_quotehtml $col]\""
+	append csv_header "\"[ns_quotehtml $col]\""
     }
     
     # ---------------------------------------------------------------
@@ -585,7 +585,7 @@ ad_proc im_timesheet_csv1 {
     Pivot-Table friendly.
 } {
     ns_log Notice "im_timesheet_csv: "
-    set current_user_id [ad_maybe_redirect_for_registration]
+    set current_user_id [auth::require_login]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
 
     set view_hours_all [im_permission $current_user_id view_hours_all]
@@ -640,21 +640,21 @@ ad_proc im_timesheet_csv1 {
     # ---------------------------------------------------------------
     
     set criteria [list]
-    if { ![empty_string_p $company_id] && $company_id != 0 } {
+    if { $company_id ne "" && $company_id != 0 } {
 	lappend criteria "p.company_id = :company_id"
     }
-    if { ![empty_string_p $project_id] && $project_id != 0 } {
+    if { $project_id ne "" && $project_id != 0 } {
 	lappend criteria "h.project_id = :project_id"
     }
-    if { ![empty_string_p $start_date]} {
+    if { $start_date ne ""} {
 	lappend criteria "h.day > to_timestamp(:start_date, 'YYYY-MM-DD')"
     }
-    if { ![empty_string_p $end_date]} {
+    if { $end_date ne ""} {
 	lappend criteria "h.day > to_timestamp(:end_date, 'YYYY-MM-DD')"
     }
 
     set where_clause [join $criteria " and\n	    "]
-    if { ![empty_string_p $where_clause] } {
+    if { $where_clause ne "" } {
 	set where_clause " and $where_clause"
     }
 
@@ -712,7 +712,7 @@ ad_proc im_timesheet_csv1 {
     foreach col $column_headers {
 	# Generate a header line for CSV export
 	if {"" != $csv_header} { append csv_header $csv_separator }
-	append csv_header "\"[ad_quotehtml $col]\""
+	append csv_header "\"[ns_quotehtml $col]\""
     }
 
 
@@ -862,22 +862,22 @@ ad_proc im_invoices_csv1 {
     # Generate SQL Query
     
     set criteria [list]
-    if { ![empty_string_p $cost_status_id] && $cost_status_id > 0 } {
+    if { $cost_status_id ne "" && $cost_status_id > 0 } {
 	lappend criteria "i.cost_status_id=:cost_status_id"
     }
     
-    if { ![empty_string_p $cost_type_id] && $cost_type_id != 0 } {
+    if { $cost_type_id ne "" && $cost_type_id != 0 } {
 	lappend criteria "i.cost_type_id in ([join [im_sub_categories $cost_type_id] ","])"
     }
-    if { ![empty_string_p $customer_id] && $customer_id != 0 } {
+    if { $customer_id ne "" && $customer_id != 0 } {
 	lappend criteria "i.customer_id=:customer_id"
     }
-    if { ![empty_string_p $provider_id] && $provider_id != 0 } {
+    if { $provider_id ne "" && $provider_id != 0 } {
 	lappend criteria "i.provider_id=:provider_id"
     }
     
     set where_clause [join $criteria " and\n	    "]
-    if { ![empty_string_p $where_clause] } {
+    if { $where_clause ne "" } {
 	set where_clause " and $where_clause"
     }
     
@@ -951,7 +951,7 @@ ad_proc im_invoices_csv1 {
 	# Generate a header line for CSV export. Header uses the
 	# non-localized text so that it's identical in all languages.
 	if {"" != $csv_header} { append csv_header $csv_separator }
-	append csv_header "\"[ad_quotehtml $col]\""
+	append csv_header "\"[ns_quotehtml $col]\""
 	
     }
     
@@ -1078,7 +1078,7 @@ ad_proc im_users_csv1 {
     }
     
     set where_clause [join $criteria " and\n	    "]
-    if { ![empty_string_p $where_clause] } {
+    if { $where_clause ne "" } {
 	set where_clause " and $where_clause"
     }
     
@@ -1132,7 +1132,7 @@ ad_proc im_users_csv1 {
 	# Generate a header line for CSV export. Header uses the
 	# non-localized text so that it's identical in all languages.
 	if {"" != $csv_header} { append csv_header $csv_separator }
-	append csv_header "\"[ad_quotehtml $col]\""
+	append csv_header "\"[ns_quotehtml $col]\""
 	
     }
     
@@ -1217,8 +1217,8 @@ ad_proc im_vacation_csv {
     set current_year [db_string current_year "select to_char(now(), 'YYYY')"]
     set date_format [im_l10n_sql_date_format]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
-    set start_of_last_year "[expr $current_year - 1]-01-01"
-    set end_of_last_year "[expr $current_year - 1]-12-31"
+    set start_of_last_year "[expr {$current_year - 1}]-01-01"
+    set end_of_last_year "[expr {$current_year - 1}]-12-31"
 
     set column_headers [list]
     set column_vars [list]
@@ -1283,7 +1283,7 @@ ad_proc im_vacation_csv {
         if { ![info exists vacation_days_per_year] || "" == $vacation_days_per_year } { set vacation_days_per_year 0 }
         if { ![info exists sum_duration_days] || "" == $sum_duration_days } { set sum_duration_days 0 }
 
-	set new_vacation_balance [expr $vacation_balance + $vacation_days_per_year - $sum_duration_days]
+	set new_vacation_balance [expr {$vacation_balance + $vacation_days_per_year - $sum_duration_days}]
 	append csv_body "${user_id}${csv_separator}${user_name}$csv_separator"
 	append csv_body "[lc_numeric $vacation_days_per_year]$csv_separator"
 	append csv_body "[lc_numeric $vacation_balance]$csv_separator"
