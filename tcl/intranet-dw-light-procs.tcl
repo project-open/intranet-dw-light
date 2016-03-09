@@ -18,13 +18,13 @@ ad_register_proc GET "/intranet-dw-light/*.csv" im_dw_light_handler
 
 
 # -----------------------------------------------------------
-# Handle calls in /intranet-dw-light/xxxx.csv
+# Handle calls in /intranet-dw-light/*.csv
 # -----------------------------------------------------------
 
 ad_proc im_dw_light_handler { } {  
     This procedure gets called for all page requests in
     /intranet-dw-light . In particular, it serves pages like:
-    /intranet-dw-light/xxxx.csv
+    /intranet-dw-light/*.csv
 } {
     set url [ns_conn url]
     set query [ns_conn query]
