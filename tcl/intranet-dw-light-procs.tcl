@@ -69,6 +69,7 @@ ad_proc im_dw_light_handler { } {
 	timesheet { return [im_timesheet_csv1 -vars $vars] }
 	users { return [im_users_csv1 -vars $vars] }
 	vacation { return [im_vacation_csv] }
+	absence { return [im_vacation_csv] }
 	default {
 	    ad_return_complaint 1 "Invalid file name<br>
             You have specified an invalid file name."
