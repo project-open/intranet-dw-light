@@ -100,10 +100,6 @@ extra_select, extra_where, sort_order, visible_for) values (
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
 extra_select, extra_where, sort_order, visible_for) values (
-2475,24,NULL,'BudgetCur','$project_budget_currency','','',75,'');
-
-insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
-extra_select, extra_where, sort_order, visible_for) values (
 2477,24,NULL,'BudgetHours','$project_budget_hours','','',77,'');
 
 insert into im_view_columns (column_id, view_id, group_id, column_name, column_render_tcl,
