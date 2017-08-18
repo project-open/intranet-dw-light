@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<message_catalog package_key="intranet-dw-light" package_version="3.4.0.7.0" locale="pl_PL" charset="utf-8">
+<message_catalog package_key="intranet-dw-light" locale="pl_PL" charset="utf-8">
 
+  <msg key="Export_Companies_CSV">Eksport Firm Do CSV</msg>
+  <msg key="Export_Customer_Invoices_CSV">Eksport faktur sprzedażowych do CSV</msg>
+  <msg key="Export_Projects_CSV">Eksportuj Projekty Do CSV</msg>
   <msg key="Export_Timesheet_Cube">Eksport zestawienia czasu pracy</msg>
 </message_catalog>
