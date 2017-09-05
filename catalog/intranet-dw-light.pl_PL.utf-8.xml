@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <message_catalog package_key="intranet-dw-light" locale="pl_PL" charset="utf-8">
 
-  <msg key="Export_Companies_CSV">Eksport Firm Do CSV</msg>
+  <msg key="Export_Companies_CSV">Eksport firm do CSV</msg>
+  <msg key="Export_Company_Cube">Eksportuj kostkę firmową</msg>
+  <msg key="Export_Customer_Invoice_Cube">Eksportuj kostę z fakturami klienta</msg>
   <msg key="Export_Customer_Invoices_CSV">Eksport faktur sprzedażowych do CSV</msg>
-  <msg key="Export_Projects_CSV">Eksportuj Projekty Do CSV</msg>
+  <msg key="Export_Project_Cube">Eksportuj kostkę z projektami</msg>
+  <msg key="Export_Projects_CSV">Eksportuj projekty do CSV</msg>
+  <msg key="Export_Provider_Invoice_Cube">Eksportuj kostkę z rachunkami dostawców</msg>
+  <msg key="Export_Provider_Invoices_CSV">Wyeksportuj faktury dostawców do CSV</msg>
   <msg key="Export_Timesheet_Cube">Eksport zestawienia czasu pracy</msg>
 </message_catalog>
