@@ -2,12 +2,12 @@
 <message_catalog package_key="intranet-dw-light" locale="de_DE" charset="ISO-8859-1">
 
   <msg key="Export_Companies_CSV">Firmen nach CSV exportieren</msg>
-  <msg key="Export_Company_Cube">Firmen-Cube exportieren</msg>
-  <msg key="Export_Customer_Invoice_Cube">Kundenrechnungen-Cube exportieren</msg>
+  <msg key="Export_Company_Cube">Firmen - Data-Warehouse Würfel exportieren</msg>
+  <msg key="Export_Customer_Invoice_Cube">Finanzen - Kundenrechnungen Data-Warehouse Würfel exportieren</msg>
   <msg key="Export_Customer_Invoices_CSV">Kundenrechnungen nach CSV exportieren</msg>
-  <msg key="Export_Project_Cube">Projekt-Cube exportieren</msg>
-  <msg key="Export_Projects_CSV">Projekt nach CSV exportieren</msg>
+  <msg key="Export_Project_Cube">Projekte - Data-Warehouse Würfel exportieren</msg>
+  <msg key="Export_Projects_CSV">Projekte nach CSV exportieren</msg>
   <msg key="Export_Provider_Invoice_Cube">Lieferantenrechnungen Würfel exportieren</msg>
   <msg key="Export_Provider_Invoices_CSV">Lieferantenrechnungen nach CSV exportieren</msg>
-  <msg key="Export_Timesheet_Cube">Stundentafel-Cube exportieren</msg>
+  <msg key="Export_Timesheet_Cube">Zeiterfassung - Data-Warehouse Würfel exportieren</msg>
 </message_catalog>
