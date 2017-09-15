@@ -7,7 +7,7 @@
   <msg key="Export_Customer_Invoices_CSV">Kundenrechnungen nach CSV exportieren</msg>
   <msg key="Export_Project_Cube">Projekte - Data-Warehouse Würfel exportieren</msg>
   <msg key="Export_Projects_CSV">Projekte nach CSV exportieren</msg>
-  <msg key="Export_Provider_Invoice_Cube">Lieferantenrechnungen Würfel exportieren</msg>
-  <msg key="Export_Provider_Invoices_CSV">Lieferantenrechnungen nach CSV exportieren</msg>
+  <msg key="Export_Provider_Invoice_Cube">Lieferantendokumente Würfel exportieren</msg>
+  <msg key="Export_Provider_Invoices_CSV">Lieferantendokumente nach CSV exportieren</msg>
   <msg key="Export_Timesheet_Cube">Zeiterfassung - Data-Warehouse Würfel exportieren</msg>
 </message_catalog>
