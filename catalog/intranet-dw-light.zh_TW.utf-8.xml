@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message_catalog package_key="intranet-dw-light" locale="zh_TW" charset="utf-8">
+
+  <msg key="Export_Companies_CSV">導出公司 CSV</msg>
+  <msg key="Export_Customer_Invoices_CSV">導出顧客發票CSV</msg>
+  <msg key="Export_Projects_CSV">導出專案CSV</msg>
+  <msg key="Export_Provider_Invoices_CSV">導出供應商發票CSV</msg>
+  <msg key="Export_Timesheet_Cube">導出時間表Cube</msg>
+</message_catalog>
