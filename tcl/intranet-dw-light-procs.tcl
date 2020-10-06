@@ -1069,6 +1069,7 @@ ad_proc im_users_csv1 {
     set lol [im_dynfield::append_attributes_to_im_view -object_type "person"]
     set column_headers [concat $column_headers [lindex $lol 0]]
     set column_vars [concat $column_vars [lindex $lol 1]]
+    set column_derefs [lindex $lol 2]
 
     # ---------------------------------------------------------------
     # Generate SQL Query
@@ -1092,6 +1093,7 @@ ad_proc im_users_csv1 {
 
     set sql "
 	SELECT 
+		[join $column_derefs "\n\t\t"]
 		pa.*,
 		pe.*,
 		u.user_id,
@@ -1129,20 +1131,17 @@ ad_proc im_users_csv1 {
 
     set csv_header ""
     foreach col $column_headers {
-	
 	# Generate a header line for CSV export. Header uses the
 	# non-localized text so that it's identical in all languages.
 	if {"" != $csv_header} { append csv_header $csv_separator }
 	append csv_header "\"[ns_quotehtml $col]\""
-	
     }
     
     # ---------------------------------------------------------------
     # Format the Result Data
-    
+
     set ctr 0
     set csv_body ""
-   
     db_foreach users_info_query $sql {
 
 	set csv_line ""
