@@ -314,6 +314,7 @@ ad_proc im_projects_csv1 {
     { -project_type_id 0 } 
     { -company_id 0 } 
     { -vars "" }
+    { -number_locale "" }
 } {  
     Returns a "broad" CSV file particularly designed to be
     Pivot-Table friendly.
@@ -322,7 +323,10 @@ ad_proc im_projects_csv1 {
     ns_log Notice "im_companies_csv: "
     set current_user_id [auth::require_login]
     set today [lindex [split [ns_localsqltimestamp] " "] 0]
-
+    set output_format "html"
+    set locale [lang::user::locale]
+    if {"" == $number_locale} { set number_locale $locale  }
+    
     set view_invoices [im_permission $current_user_id view_invoices]
     set view_projects_all [im_permission $current_user_id view_projects_all]
     set perm [expr {$view_invoices && $view_projects_all}]
@@ -510,15 +514,14 @@ ad_proc im_projects_csv1 {
     db_foreach projects_info_query $sql {
 
 	# compatibility with older versions
-	set project_lead $lead_name
-	
+	set project_lead $lead_name	
 	set csv_line ""
-
 	foreach column_var $column_vars {
             if [catch {
 		set ttt ""
 		if {"" != $csv_line} { append csv_line $csv_separator }
 		set cmd "set ttt $column_var"
+		ns_log Notice "xxx: cmd=$cmd"
 		eval "$cmd"
 		append csv_line "\"[im_csv_duplicate_double_quotes $ttt]\""
 	    } errmsg] {
@@ -546,7 +549,7 @@ ad_proc im_projects_csv1 {
     } else {
 	set string_latin1 [encoding convertto $tcl_encoding $string] 
     }
-
+    
     # For some reason we have to send out a "hard" HTTP
     # header. ns_return and ns_respond don't seem to convert
     # the content string into the right Latin1 encoding.
